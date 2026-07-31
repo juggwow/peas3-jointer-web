@@ -1,0 +1,118 @@
+.app-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.main-navbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  height: 64px;
+}
+
+.nav-container {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+.brand-link {
+  display: flex;
+  align-items: center;
+  color: white;
+  text-decoration: none;
+  gap: 8px;
+}
+
+.brand-icon {
+  font-size: 28px;
+  width: 28px;
+  height: 28px;
+  color: #FFF200; /* Yellow highlight for bolt */
+  animation: pulse-light 2s infinite;
+}
+
+.brand-title {
+  font-weight: 600;
+  font-size: 1.2rem;
+  letter-spacing: 0.5px;
+}
+
+.brand-subtitle {
+  font-size: 0.9rem;
+  opacity: 0.8;
+  font-weight: 300;
+  margin-left: 4px;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.nav-new-btn {
+  height: 38px !important;
+  font-size: 0.9rem !important;
+}
+
+.main-content {
+  flex-grow: 1;
+  background-color: var(--bg-color);
+  padding-bottom: 40px;
+}
+
+.main-footer {
+  background-color: #1E293B;
+  color: #94A3B8;
+  padding: 24px 16px;
+  text-align: center;
+  border-top: 1px solid #334155;
+  font-size: 0.85rem;
+}
+
+.footer-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.footer-tech {
+  opacity: 0.6;
+  font-size: 0.75rem;
+}
+
+@keyframes pulse-light {
+  0% { transform: scale(1); filter: drop-shadow(0 0 0px rgba(255, 242, 0, 0)); }
+  50% { transform: scale(1.1); filter: drop-shadow(0 0 8px rgba(255, 242, 0, 0.8)); }
+  100% { transform: scale(1); filter: drop-shadow(0 0 0px rgba(255, 242, 0, 0)); }
+}
+
+@media (max-width: 600px) {
+  .brand-subtitle {
+    display: none;
+  }
+  .nav-links span {
+    display: none; /* hide labels on mobile, keep icons */
+  }
+  .nav-new-btn {
+    min-width: 44px !important;
+    padding: 0 !important;
+    border-radius: 50% !important;
+    width: 44px !important;
+    height: 44px !important;
+  }
+  .nav-new-btn mat-icon {
+    margin: 0 !important;
+  }
+}

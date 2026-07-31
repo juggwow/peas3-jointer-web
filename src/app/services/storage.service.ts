@@ -1,0 +1,111 @@
+import { Injectable } from '@angular/core';
+
+export interface HistoryItem {
+  id: string;
+  circuitName: string;
+  phase: string;
+  timestamp: string;
+}
+
+@Injectable({
+  providedIn: 'root'
+})
+export class StorageService {
+  private historyKey = 'pea_jointer_history';
+  private imageKeysKey = 'pea_jointer_image_keys';
+
+  constructor() {}
+
+  /**
+   * Get all local history items
+   */
+  getHistory(): HistoryItem[] {
+    try {
+      const data = localStorage.getItem(this.historyKey);
+      return data ? JSON.parse(data) : [];
+    } catch (e) {
+      console.error('Failed to read history from localStorage', e);
+      return [];
+    }
+  }
+
+  /**
+   * Save a new termination record ID to local history
+   */
+  saveRecord(id: string, circuitName: string, phase: string): void {
+    try {
+      const history = this.getHistory();
+      if (!history.some(item => item.id === id)) {
+        history.unshift({
+          id,
+          circuitName,
+          phase,
+          timestamp: new Date().toISOString()
+        });
+        localStorage.setItem(this.historyKey, JSON.stringify(history.slice(0, 50)));
+      }
+    } catch (e) {
+      console.error('Failed to write history to localStorage', e);
+    }
+  }
+
+  /**
+   * Remove a record from local history
+   */
+  removeRecord(id: string): void {
+    try {
+      const history = this.getHistory();
+      const filtered = history.filter(item => item.id !== id);
+      localStorage.setItem(this.historyKey, JSON.stringify(filtered));
+    } catch (e) {
+      console.error('Failed to remove history item', e);
+    }
+  }
+
+  /**
+   * Store the mapping of imageId (UUID) to S3 ImageKey (filename)
+   */
+  saveImageKey(imageId: string, imageKey: string): void {
+    try {
+      const mappings = this.getAllImageKeyMappings();
+      mappings[imageId] = imageKey;
+      localStorage.setItem(this.imageKeysKey, JSON.stringify(mappings));
+    } catch (e) {
+      console.error('Failed to save image key mapping', e);
+    }
+  }
+
+  /**
+   * Retrieve the S3 ImageKey corresponding to an imageId
+   */
+  getImageKey(imageId: string): string | undefined {
+    try {
+      const mappings = this.getAllImageKeyMappings();
+      return mappings[imageId];
+    } catch (e) {
+      return undefined;
+    }
+  }
+
+  /**
+   * Remove a mapped image key
+   */
+  removeImageKey(imageId: string): void {
+    try {
+      const mappings = this.getAllImageKeyMappings();
+      delete mappings[imageId];
+      localStorage.setItem(this.imageKeysKey, JSON.stringify(mappings));
+    } catch (e) {
+      console.error('Failed to remove image key mapping', e);
+    }
+  }
+
+  private getAllImageKeyMappings(): Record<string, string> {
+    try {
+      const data = localStorage.getItem(this.imageKeysKey);
+      return data ? JSON.parse(data) : {};
+    } catch (e) {
+      return {};
+    }
+  }
+}

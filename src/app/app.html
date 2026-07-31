@@ -1,0 +1,38 @@
+<div class="app-wrapper">
+  <!-- Navbar -->
+  <mat-toolbar color="primary" class="main-navbar">
+    <div class="nav-container">
+      <a routerLink="/" class="brand-link">
+        <mat-icon class="brand-icon">bolt</mat-icon>
+        <span class="brand-title">PEA Jointer Portal</span>
+        <span class="brand-subtitle">| Cable Termination Records</span>
+      </a>
+      
+      <span class="spacer"></span>
+      
+      <div class="nav-links">
+        <button mat-button routerLink="/" routerLinkActive="active-nav" [routerLinkActiveOptions]="{exact: true}">
+          <mat-icon>dashboard</mat-icon>
+          <span>หน้าหลัก</span>
+        </button>
+        <button mat-raised-button color="accent" routerLink="/record/new" class="nav-new-btn">
+          <mat-icon>add_circle</mat-icon>
+          <span>บันทึกข้อมูลใหม่</span>
+        </button>
+      </div>
+    </div>
+  </mat-toolbar>
+
+  <!-- Router Outlet wrapper -->
+  <main class="main-content">
+    <router-outlet></router-outlet>
+  </main>
+
+  <!-- Footer -->
+  <footer class="main-footer">
+    <div class="footer-container">
+      <p>© 2026 การไฟฟ้าส่วนภูมิภาค (PEA) • โครงการบันทึกตำแหน่งพิกัดติดตั้งสายเคเบิลใต้ดิน PEA-S3</p>
+      <p class="footer-tech">Powered by Angular Material & Leaflet</p>
+    </div>
+  </footer>
+</div>

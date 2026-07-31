@@ -1,0 +1,203 @@
+/* Import Leaflet CSS for interactive maps */
+@import "leaflet/dist/leaflet.css";
+
+/* Import Google Fonts for modern typography */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Kanit:wght@300;400;500;600;700&display=swap');
+
+/* Base Styles & PEA Design System Variables */
+:root {
+  --primary-color: #7E2982;       /* PEA Purple */
+  --primary-hover: #671D6A;
+  --primary-light: #F6EBF7;
+  --accent-color: #F15A24;        /* PEA Orange */
+  --accent-hover: #D94612;
+  --accent-light: #FFF2EE;
+  --success-color: #10B981;
+  --warning-color: #F59E0B;
+  --danger-color: #EF4444;
+  
+  --bg-color: #F8FAFC;
+  --card-bg: #FFFFFF;
+  --text-main: #1E293B;
+  --text-muted: #64748B;
+  --border-color: #E2E8F0;
+  
+  --font-family: 'Kanit', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
+}
+
+/* Reset and Global Styles */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-family);
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-color);
+}
+::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94A3B8;
+}
+
+/* Overriding Angular Material Styles to Match PEA Colors */
+.mat-toolbar.mat-primary {
+  background-color: var(--primary-color) !important;
+  color: white !important;
+  box-shadow: var(--shadow-md);
+}
+
+.mat-mdc-raised-button.mat-primary {
+  --mdc-protected-button-container-color: var(--primary-color) !important;
+  --mdc-protected-button-label-text-color: #ffffff !important;
+  font-family: var(--font-family) !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.5px !important;
+  border-radius: 8px !important;
+  padding: 0 20px !important;
+  height: 44px !important;
+}
+
+.mat-mdc-raised-button.mat-primary:hover {
+  --mdc-protected-button-container-color: var(--primary-hover) !important;
+}
+
+.mat-mdc-raised-button.mat-accent {
+  --mdc-protected-button-container-color: var(--accent-color) !important;
+  --mdc-protected-button-label-text-color: #ffffff !important;
+  font-family: var(--font-family) !important;
+  font-weight: 500 !important;
+  border-radius: 8px !important;
+  height: 44px !important;
+}
+
+.mat-mdc-raised-button.mat-accent:hover {
+  --mdc-protected-button-container-color: var(--accent-hover) !important;
+}
+
+.mat-mdc-button, .mat-mdc-outlined-button {
+  font-family: var(--font-family) !important;
+  border-radius: 8px !important;
+}
+
+.mat-mdc-form-field {
+  width: 100%;
+  font-family: var(--font-family) !important;
+  margin-bottom: 8px;
+}
+
+/* Custom Card Container Styles */
+.pea-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  box-shadow: var(--shadow-md);
+  padding: 24px;
+  transition: var(--transition-smooth);
+}
+
+.pea-card:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+}
+
+/* Form Styling */
+.form-title {
+  color: var(--primary-color);
+  font-weight: 600;
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+  border-bottom: 3px solid var(--primary-light);
+  padding-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Leaflet Map overrides and styling */
+.map-container {
+  height: 380px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+  z-index: 1;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* Form Helper Layout classes */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+@media (min-width: 768px) {
+  .form-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* Angular Material Select Panel & Dropdown styling (solid background) */
+.mat-mdc-select-panel {
+  background-color: var(--card-bg) !important;
+  box-shadow: var(--shadow-lg) !important;
+  border-radius: 8px !important;
+  border: 1px solid var(--border-color) !important;
+  padding: 4px 0 !important;
+}
+
+.mat-mdc-option {
+  color: var(--text-main) !important;
+  font-family: var(--font-family) !important;
+  min-height: 44px !important;
+}
+
+.mat-mdc-option:hover:not(.mdc-list-item--disabled),
+.mat-mdc-option.mat-mdc-option-active {
+  background-color: var(--primary-light) !important;
+}
+
+.mat-mdc-option.mdc-list-item--selected:not(.mdc-list-item--disabled) {
+  background-color: var(--primary-color) !important;
+  color: #ffffff !important;
+}
+
+/* Datepicker popup styling (solid background) */
+.mat-datepicker-content {
+  background-color: var(--card-bg) !important;
+  box-shadow: var(--shadow-lg) !important;
+  border-radius: 12px !important;
+  border: 1px solid var(--border-color) !important;
+}
+
