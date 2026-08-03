@@ -81,7 +81,14 @@ export class RecordFormComponent implements OnInit, OnDestroy, AfterViewInit {
     this.initForm();
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    const savedUserId = this.storageService.getEmployeeId();
+    if (!savedUserId) {
+      this.snackBar.open('กรุณากรอกรหัสพนักงานก่อนดำเนินการบันทึกข้อมูล', 'ปิด', { duration: 5000 });
+      this.router.navigate(['/']);
+      return;
+    }
+  }
 
   ngAfterViewInit(): void {
     this.initMap();
@@ -94,8 +101,9 @@ export class RecordFormComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   initForm(): void {
+    const savedUserId = this.storageService.getEmployeeId();
     this.recordForm = this.fb.group({
-      userId: ['', [Validators.required, Validators.pattern(/^\d{7}$/)]],
+      userId: [{ value: savedUserId || '', disabled: !!savedUserId }, [Validators.required, Validators.pattern(/^\d{6,7}$/)]],
       installationDate: [new Date(), Validators.required],
       operationType: ['New Installation', Validators.required],
       operationTypeCustom: [''],
@@ -232,7 +240,7 @@ export class RecordFormComponent implements OnInit, OnDestroy, AfterViewInit {
     this.statusText = 'กำลังส่งข้อมูลบันทึกไปยังระบบ...';
     this.cdr.detectChanges();
 
-    const formVal = this.recordForm.value;
+    const formVal = this.recordForm.getRawValue();
     const dateObj: Date = formVal.installationDate;
 
     const opType = formVal.operationType === 'Other' ? formVal.operationTypeCustom : formVal.operationType;

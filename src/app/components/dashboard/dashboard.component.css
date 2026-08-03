@@ -4,12 +4,81 @@
   padding: 24px 16px;
 }
 
+/* Login Wrapper Styles */
+.login-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 70vh;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 480px;
+  padding: 36px 28px !important;
+  text-align: center;
+  box-shadow: var(--shadow-lg);
+}
+
+.login-card mat-card-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.pea-logo-circle.large {
+  width: 80px;
+  height: 80px;
+  margin-bottom: 16px;
+  background-color: var(--primary-light);
+}
+
+.pea-logo-circle.large .logo-icon {
+  font-size: 44px;
+  color: var(--primary-color);
+}
+
+.login-header-text {
+  width: 100%;
+}
+
+.login-title {
+  font-size: 1.6rem !important;
+  font-weight: 600 !important;
+  color: var(--primary-color) !important;
+  margin-bottom: 8px !important;
+}
+
+.login-subtitle {
+  font-size: 0.95rem !important;
+  color: var(--text-muted) !important;
+  line-height: 1.4 !important;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 12px;
+}
+
+.login-btn {
+  height: 48px !important;
+  font-size: 1.05rem !important;
+  font-weight: 500 !important;
+  border-radius: 8px !important;
+  margin-top: 8px;
+}
+
+/* Welcome Hero Section */
 .hero-banner {
   background: linear-gradient(135deg, var(--primary-color) 0%, #a448aa 100%);
   color: white;
   border-radius: 20px;
   padding: 32px;
-  margin-bottom: 28px;
+  margin-bottom: 24px;
   box-shadow: var(--shadow-md);
   position: relative;
   overflow: hidden;
@@ -60,6 +129,54 @@
   margin: 0;
 }
 
+/* Employee Greeting Bar */
+.employee-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px !important;
+  margin-bottom: 24px;
+  border-radius: 12px !important;
+  background-color: var(--primary-light) !important;
+  border: 1px solid rgba(126, 41, 130, 0.15) !important;
+}
+
+.employee-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.employee-icon {
+  font-size: 32px;
+  width: 32px;
+  height: 32px;
+  color: var(--primary-color);
+}
+
+.employee-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.employee-label {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.employee-val {
+  font-size: 1.05rem;
+  color: var(--text-main);
+}
+
+.logout-btn {
+  height: 38px !important;
+  font-size: 0.85rem !important;
+}
+
+/* Stats Grid */
 .stats-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -113,6 +230,7 @@
   align-items: center;
   justify-content: center;
   padding: 12px 0;
+  min-height: 100px;
 }
 
 .huge-number {
@@ -123,13 +241,47 @@
   margin-bottom: 8px;
 }
 
+.stat-spinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 70px;
+}
+
 .stat-content p {
   color: var(--text-muted);
   font-size: 0.9rem;
 }
 
+/* History Section and Lists */
 .history-section {
   background: white;
+  padding: 24px !important;
+}
+
+.section-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  border-bottom: 3px solid var(--primary-light);
+  padding-bottom: 8px;
+}
+
+.section-header-row .form-title.no-border {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.loading-state {
+  text-align: center;
+  padding: 48px 16px;
+  color: var(--text-muted);
+}
+
+.loading-state p {
+  margin-top: 12px;
 }
 
 .empty-state {
@@ -209,4 +361,19 @@
 .view-btn {
   height: 38px !important;
   border-radius: 6px !important;
+}
+
+/* Animations and Spinners */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.spin-icon {
+  animation: spin 1.5s linear infinite;
+  display: inline-block;
+}
+
+.text-purple {
+  color: var(--primary-color);
 }

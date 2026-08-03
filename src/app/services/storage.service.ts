@@ -13,8 +13,43 @@ export interface HistoryItem {
 export class StorageService {
   private historyKey = 'pea_jointer_history';
   private imageKeysKey = 'pea_jointer_image_keys';
+  private employeeIdKey = 'pea_jointer_employee_id';
 
   constructor() {}
+
+  /**
+   * Get employee ID from local storage
+   */
+  getEmployeeId(): string | null {
+    try {
+      return localStorage.getItem(this.employeeIdKey);
+    } catch (e) {
+      console.error('Failed to read employee ID from localStorage', e);
+      return null;
+    }
+  }
+
+  /**
+   * Save employee ID to local storage
+   */
+  setEmployeeId(id: string): void {
+    try {
+      localStorage.setItem(this.employeeIdKey, id);
+    } catch (e) {
+      console.error('Failed to save employee ID to localStorage', e);
+    }
+  }
+
+  /**
+   * Clear employee ID from local storage
+   */
+  clearEmployeeId(): void {
+    try {
+      localStorage.removeItem(this.employeeIdKey);
+    } catch (e) {
+      console.error('Failed to remove employee ID from localStorage', e);
+    }
+  }
 
   /**
    * Get all local history items

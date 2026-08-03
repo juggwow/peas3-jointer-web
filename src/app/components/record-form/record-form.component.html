@@ -14,13 +14,13 @@
         <div class="section-divider">ข้อมูลผู้ปฏิบัติงาน</div>
         <div class="form-grid">
           <mat-form-field appearance="outline">
-            <mat-label>รหัสพนักงาน (7 หลัก)</mat-label>
+            <mat-label>รหัสพนักงาน (6-7 หลัก)</mat-label>
             <input matInput formControlName="userId" placeholder="ตัวอย่าง: 1023456" maxlength="7">
             <mat-error *ngIf="recordForm.get('userId')?.hasError('required')">
               กรุณากรอกรหัสพนักงาน
             </mat-error>
             <mat-error *ngIf="recordForm.get('userId')?.hasError('pattern')">
-              รหัสพนักงานต้องเป็นตัวเลข 7 หลักเท่านั้น
+              รหัสพนักงานต้องเป็นตัวเลข 6-7 หลักเท่านั้น
             </mat-error>
           </mat-form-field>
 

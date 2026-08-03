@@ -69,10 +69,13 @@ export class ApiService {
     return this.http.get<CableTermination>(`${this.baseUrl}/termination/${id}`);
   }
 
-  getTerminations(page: number, limit: number, search?: string): Observable<PaginatedResponse<CableTermination>> {
+  getTerminations(page: number, limit: number, search?: string, userId?: string): Observable<PaginatedResponse<CableTermination>> {
     let url = `${this.baseUrl}/terminations?page=${page}&limit=${limit}`;
     if (search) {
       url += `&search=${encodeURIComponent(search)}`;
+    }
+    if (userId) {
+      url += `&userId=${encodeURIComponent(userId)}`;
     }
     return this.http.get<PaginatedResponse<CableTermination>>(url);
   }

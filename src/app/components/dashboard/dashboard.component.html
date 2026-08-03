@@ -1,87 +1,149 @@
 <div class="dashboard-container animate-fade-in">
-  <!-- Welcome Hero Section -->
-  <div class="hero-banner">
-    <div class="hero-content">
-      <div class="pea-logo-circle">
-        <span class="material-icons logo-icon">electric_bolt</span>
-      </div>
-      <div class="hero-text">
-        <h1>ระบบบันทึกข้อมูลการติดตั้ง Termination สายเคเบิลใต้ดิน</h1>
-        <p>การไฟฟ้าส่วนภูมิภาค (Provincial Electricity Authority)</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- Quick Action Cards & Stats -->
-  <div class="stats-grid">
-    <mat-card class="action-card pea-card">
+  <!-- 1. Login Screen (if employeeId is not set) -->
+  <div *ngIf="!employeeId" class="login-wrapper">
+    <mat-card class="login-card pea-card">
       <mat-card-header>
-        <mat-card-title>
-          <mat-icon class="card-title-icon main-purple">assignment</mat-icon>
-          บันทึกข้อมูลการติดตั้ง
-        </mat-card-title>
+        <div class="pea-logo-circle large">
+          <span class="material-icons logo-icon">electric_bolt</span>
+        </div>
+        <div class="login-header-text">
+          <mat-card-title class="login-title">กรุณากรอกรหัสพนักงาน</mat-card-title>
+          <mat-card-subtitle class="login-subtitle">ระบบบันทึกข้อมูลการติดตั้ง Termination สายเคเบิลใต้ดิน</mat-card-subtitle>
+        </div>
       </mat-card-header>
       <mat-card-content>
-        <p>บันทึกการติดตั้ง Cable Termination ใหม่ พร้อมระบุพิกัด GPS และอัปโหลดภาพถ่าย</p>
-      </mat-card-content>
-      <mat-card-actions>
-        <button mat-raised-button color="accent" routerLink="/record/new" class="action-btn">
-          <mat-icon>add_location_alt</mat-icon>
-          เริ่มบันทึกข้อมูล
-        </button>
-      </mat-card-actions>
-    </mat-card>
-
-    <mat-card class="stat-info-card pea-card">
-      <mat-card-header>
-        <mat-card-title>
-          <mat-icon class="card-title-icon main-orange">history</mat-icon>
-          จำนวนรายการที่บันทึก
-        </mat-card-title>
-      </mat-card-header>
-      <mat-card-content class="stat-content">
-        <div class="huge-number">{{ historyList.length }}</div>
-        <p>รายการที่ดำเนินการโดยเครื่องนี้ (ประวัติการบันทึก)</p>
+        <form [formGroup]="loginForm" (ngSubmit)="onLoginSubmit()" class="login-form">
+          <mat-form-field appearance="outline">
+            <mat-label>รหัสพนักงาน (6-7 หลัก)</mat-label>
+            <input matInput formControlName="userId" placeholder="ตัวอย่าง: 1023456" maxlength="7" autocomplete="off">
+            <mat-icon matSuffix class="main-purple">badge</mat-icon>
+            <mat-error *ngIf="loginForm.get('userId')?.hasError('required')">
+              กรุณากรอกรหัสพนักงาน
+            </mat-error>
+            <mat-error *ngIf="loginForm.get('userId')?.hasError('pattern')">
+              รหัสพนักงานต้องเป็นตัวเลข 6-7 หลักเท่านั้น
+            </mat-error>
+          </mat-form-field>
+          <button mat-raised-button color="primary" type="submit" [disabled]="loginForm.invalid" class="login-btn">
+            <mat-icon>login</mat-icon>
+            เข้าสู่ระบบ
+          </button>
+        </form>
       </mat-card-content>
     </mat-card>
   </div>
 
-  <!-- Recent History List -->
-  <div class="history-section pea-card">
-    <h2 class="form-title">
-      <mat-icon>list_alt</mat-icon>
-      ประวัติการบันทึกข้อมูลล่าสุด
-    </h2>
+  <!-- 2. Main Dashboard (if employeeId is set) -->
+  <div *ngIf="employeeId" class="dashboard-content-wrapper animate-fade-in">
+    <!-- Welcome Hero Section -->
+    <div class="hero-banner">
+      <div class="hero-content">
+        <div class="pea-logo-circle">
+          <span class="material-icons logo-icon">electric_bolt</span>
+        </div>
+        <div class="hero-text">
+          <h1>ระบบบันทึกข้อมูลการติดตั้ง Termination สายเคเบิลใต้ดิน</h1>
+          <p>การไฟฟ้าส่วนภูมิภาค (Provincial Electricity Authority)</p>
+        </div>
+      </div>
+    </div>
 
-    <div *ngIf="historyList.length === 0" class="empty-state">
-      <mat-icon class="empty-icon">history_toggle_off</mat-icon>
-      <p>ยังไม่มีประวัติการบันทึกข้อมูลในเครื่องนี้</p>
-      <button mat-stroked-button color="primary" routerLink="/record/new">
-        กดเพื่อเริ่มต้นบันทึกรายการแรก
+    <!-- Employee Greeting & Switch Button -->
+    <div class="employee-bar pea-card">
+      <div class="employee-info">
+        <mat-icon class="employee-icon main-purple">account_circle</mat-icon>
+        <div class="employee-details">
+          <span class="employee-label">ผู้เข้าใช้งานขณะนี้</span>
+          <span class="employee-val">รหัสพนักงาน: <strong>{{ employeeId }}</strong></span>
+        </div>
+      </div>
+      <button mat-stroked-button color="warn" (click)="logout()" class="logout-btn">
+        <mat-icon>logout</mat-icon>
+        เปลี่ยนรหัสพนักงาน
       </button>
     </div>
 
-    <div *ngIf="historyList.length > 0" class="history-list">
-      <div *ngFor="let item of historyList" class="history-item">
-        <div class="item-icon-wrapper">
-          <mat-icon class="item-icon">check_circle</mat-icon>
-        </div>
-        <div class="item-details">
-          <div class="item-title">
-            วงจร: <strong>{{ item.circuitName }}</strong> (Phase {{ item.phase }})
-          </div>
-          <div class="item-meta">
-            ID: {{ item.id }} • วันที่บันทึก: {{ item.timestamp | date:'dd/MM/yyyy HH:mm' }} น.
-          </div>
-        </div>
-        <div class="item-actions">
-          <button mat-raised-button color="primary" [routerLink]="['/record', item.id]" class="view-btn">
-            <mat-icon>visibility</mat-icon>
-            ดูรายละเอียด
+    <!-- Quick Action Cards & Stats -->
+    <div class="stats-grid">
+      <mat-card class="action-card pea-card">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon class="card-title-icon main-purple">assignment</mat-icon>
+            บันทึกข้อมูลการติดตั้ง
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <p>บันทึกการติดตั้ง Cable Termination ใหม่ พร้อมระบุพิกัด GPS และอัปโหลดภาพถ่าย</p>
+        </mat-card-content>
+        <mat-card-actions>
+          <button mat-raised-button color="accent" routerLink="/record/new" class="action-btn">
+            <mat-icon>add_location_alt</mat-icon>
+            เริ่มบันทึกข้อมูล
           </button>
-          <button mat-icon-button color="warn" (click)="deleteHistory(item.id)" title="ลบออกจากประวัติ">
-            <mat-icon>delete</mat-icon>
-          </button>
+        </mat-card-actions>
+      </mat-card>
+
+      <mat-card class="stat-info-card pea-card">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon class="card-title-icon main-orange">history</mat-icon>
+            จำนวนรายการที่บันทึก
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content class="stat-content">
+          <div *ngIf="isLoading" class="stat-spinner">
+            <mat-icon class="spin-icon">sync</mat-icon>
+          </div>
+          <div *ngIf="!isLoading" class="huge-number">{{ totalRecords }}</div>
+          <p>รายการที่ดำเนินการโดยรหัสพนักงานนี้</p>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Recent History List -->
+    <div class="history-section pea-card">
+      <div class="section-header-row">
+        <h2 class="form-title no-border">
+          <mat-icon>list_alt</mat-icon>
+          ประวัติการติดตั้งโดยพนักงานท่านนี้
+        </h2>
+        <button mat-icon-button color="primary" (click)="loadRecords()" [disabled]="isLoading" title="โหลดข้อมูลใหม่">
+          <mat-icon [class.spin-icon]="isLoading">refresh</mat-icon>
+        </button>
+      </div>
+
+      <div *ngIf="isLoading" class="loading-state">
+        <mat-icon class="spin-icon text-purple">sync</mat-icon>
+        <p>กำลังโหลดข้อมูล...</p>
+      </div>
+
+      <div *ngIf="!isLoading && recordsList.length === 0" class="empty-state">
+        <mat-icon class="empty-icon">history_toggle_off</mat-icon>
+        <p>ยังไม่มีประวัติการบันทึกข้อมูลของรหัสพนักงานนี้ในระบบ</p>
+        <button mat-stroked-button color="primary" routerLink="/record/new">
+          กดเพื่อเริ่มต้นบันทึกรายการแรก
+        </button>
+      </div>
+
+      <div *ngIf="!isLoading && recordsList.length > 0" class="history-list">
+        <div *ngFor="let item of recordsList" class="history-item animate-fade-in">
+          <div class="item-icon-wrapper">
+            <mat-icon class="item-icon">check_circle</mat-icon>
+          </div>
+          <div class="item-details">
+            <div class="item-title">
+              วงจร: <strong>{{ item.circuitName }}</strong> (Phase {{ item.phase }})
+            </div>
+            <div class="item-meta">
+              ประเภท: {{ item.terminationType }} • วันที่ติดตั้ง: {{ item.installationDate | date:'dd/MM/yyyy HH:mm' }} น.
+            </div>
+          </div>
+          <div class="item-actions">
+            <button mat-raised-button color="primary" [routerLink]="['/record', item.id]" class="view-btn">
+              <mat-icon>visibility</mat-icon>
+              ดูรายละเอียด
+            </button>
+          </div>
         </div>
       </div>
     </div>
