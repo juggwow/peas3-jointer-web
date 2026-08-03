@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 export interface TerminationImage {
   id: string;
@@ -37,9 +38,9 @@ export interface PaginatedResponse<T> {
   providedIn: 'root'
 })
 export class ApiService {
-  private baseUrl = 'http://localhost:3000/api';
+  private baseUrl = environment.apiUrl;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   createTermination(termination: CableTermination): Observable<{ message: string; data: CableTermination }> {
     return this.http.post<{ message: string; data: CableTermination }>(
