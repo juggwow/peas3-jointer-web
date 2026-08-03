@@ -24,6 +24,15 @@ export interface CableTermination {
   images?: TerminationImage[];
 }
 
+export interface PaginatedResponse<T> {
+  data: T[];
+  totalCount: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
+
+
 @Injectable({
   providedIn: 'root'
 })
@@ -58,6 +67,14 @@ export class ApiService {
 
   getTermination(id: string): Observable<CableTermination> {
     return this.http.get<CableTermination>(`${this.baseUrl}/termination/${id}`);
+  }
+
+  getTerminations(page: number, limit: number, search?: string): Observable<PaginatedResponse<CableTermination>> {
+    let url = `${this.baseUrl}/terminations?page=${page}&limit=${limit}`;
+    if (search) {
+      url += `&search=${encodeURIComponent(search)}`;
+    }
+    return this.http.get<PaginatedResponse<CableTermination>>(url);
   }
 
   getImageUrl(imageId: string): string {
