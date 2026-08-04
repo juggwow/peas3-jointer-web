@@ -1,0 +1,88 @@
+<div class="edit-profile-container animate-fade-in">
+  <mat-card class="edit-profile-card pea-card">
+    <mat-card-header>
+      <div class="pea-logo-circle large">
+        <span class="material-icons logo-icon">manage_accounts</span>
+      </div>
+      <div class="header-text">
+        <mat-card-title class="title-text">แก้ไขข้อมูลพนักงาน</mat-card-title>
+        <mat-card-subtitle class="subtitle-text">ปรับปรุงข้อมูลประวัติพนักงานผู้ติดตั้งสายเคเบิลใต้ดิน</mat-card-subtitle>
+      </div>
+    </mat-card-header>
+
+    <mat-card-content>
+      <!-- Loading Overlay -->
+      <div *ngIf="isLoading" class="loading-overlay">
+        <mat-spinner diameter="40" color="primary"></mat-spinner>
+        <p>กำลังโหลดข้อมูลพนักงาน...</p>
+      </div>
+
+      <form [formGroup]="profileForm" (ngSubmit)="onSubmit()" class="profile-form" *ngIf="!isLoading">
+        <!-- ID (Readonly) -->
+        <mat-form-field appearance="outline">
+          <mat-label>รหัสพนักงาน</mat-label>
+          <input matInput formControlName="id" readonly>
+          <mat-icon matSuffix class="main-purple">badge</mat-icon>
+        </mat-form-field>
+
+        <!-- First Name -->
+        <mat-form-field appearance="outline">
+          <mat-label>ชื่อจริง</mat-label>
+          <input matInput formControlName="firstName" placeholder="ระบุชื่อจริง" autocomplete="off">
+          <mat-icon matSuffix class="main-purple">person</mat-icon>
+          <mat-error *ngIf="profileForm.get('firstName')?.hasError('required')">
+            กรุณากรอกชื่อจริง
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Last Name -->
+        <mat-form-field appearance="outline">
+          <mat-label>นามสกุล</mat-label>
+          <input matInput formControlName="lastName" placeholder="ระบุนามสกุล" autocomplete="off">
+          <mat-icon matSuffix class="main-purple">person_outline</mat-icon>
+          <mat-error *ngIf="profileForm.get('lastName')?.hasError('required')">
+            กรุณากรอกนามสกุล
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Position -->
+        <mat-form-field appearance="outline">
+          <mat-label>ตำแหน่ง</mat-label>
+          <input matInput formControlName="position" placeholder="เช่น พชง.5, วศก.4" autocomplete="off">
+          <mat-icon matSuffix class="main-purple">work</mat-icon>
+        </mat-form-field>
+
+        <!-- Department -->
+        <mat-form-field appearance="outline">
+          <mat-label>สังกัด</mat-label>
+          <input matInput formControlName="department" placeholder="เช่น ผบส.กบษ.(ต3), ผปร.กฟส.ควนขนุน" autocomplete="off">
+          <mat-icon matSuffix class="main-purple">business</mat-icon>
+        </mat-form-field>
+
+        <!-- Region Group -->
+        <mat-form-field appearance="outline">
+          <mat-label>รหัสการไฟฟ้า</mat-label>
+          <input matInput formControlName="regionGroup" placeholder="ตัวอย่าง: L07101" maxlength="6" autocomplete="off">
+          <mat-icon matSuffix class="main-purple">electric_bolt</mat-icon>
+          <mat-error *ngIf="profileForm.get('regionGroup')?.hasError('required')">
+            กรุณากรอกรหัสการไฟฟ้า
+          </mat-error>
+          <mat-error *ngIf="profileForm.get('regionGroup')?.hasError('pattern')">
+            รหัสการไฟฟ้าต้องขึ้นต้นด้วย A-L และตามด้วยตัวเลข 5 หลักเท่านั้น
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Actions -->
+        <div class="form-actions">
+          <button mat-raised-button color="primary" type="submit" [disabled]="profileForm.invalid || isSaving" class="save-btn">
+            <mat-icon [class.spin-icon]="isSaving">sync</mat-icon>
+            บันทึกการแก้ไข
+          </button>
+          <button mat-button type="button" routerLink="/" [disabled]="isSaving" class="cancel-btn">
+            ยกเลิก
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>

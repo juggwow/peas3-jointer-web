@@ -23,6 +23,33 @@
           <mat-icon>add_circle</mat-icon>
           <span>บันทึกข้อมูลใหม่</span>
         </button>
+
+        <!-- Profile Dropdown Menu -->
+        <ng-container *ngIf="employeeId">
+          <button mat-button [matMenuTriggerFor]="userMenu" class="nav-profile-btn">
+            <mat-icon>account_circle</mat-icon>
+            <span class="nav-profile-id">{{ employeeId }}</span>
+            <mat-icon class="arrow-icon">arrow_drop_down</mat-icon>
+          </button>
+          <mat-menu #userMenu="matMenu" xPosition="before" class="pea-user-menu">
+            <div class="menu-user-header">
+              <mat-icon class="menu-user-icon">account_circle</mat-icon>
+              <div class="menu-user-details">
+                <span class="menu-user-label">รหัสพนักงาน</span>
+                <span class="menu-user-id">{{ employeeId }}</span>
+              </div>
+            </div>
+            <mat-divider></mat-divider>
+            <button mat-menu-item routerLink="/edit-profile" class="pea-menu-item">
+              <mat-icon class="menu-item-icon purple-icon">manage_accounts</mat-icon>
+              <span>แก้ไขข้อมูล</span>
+            </button>
+            <button mat-menu-item (click)="logout()" class="pea-menu-item">
+              <mat-icon class="menu-item-icon warn-icon">logout</mat-icon>
+              <span class="text-warn">เปลี่ยนรหัสพนักงาน</span>
+            </button>
+          </mat-menu>
+        </ng-container>
       </div>
     </div>
   </mat-toolbar>

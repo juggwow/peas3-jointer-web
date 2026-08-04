@@ -1,12 +1,9 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router, RouterModule } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatFormFieldModule } from '@angular/material/form-field';
 import { StorageService } from '../../services/storage.service';
 import { ApiService, CableTermination } from '../../services/api.service';
 
@@ -16,56 +13,38 @@ import { ApiService, CableTermination } from '../../services/api.service';
   imports: [
     CommonModule,
     RouterModule,
-    ReactiveFormsModule,
     MatButtonModule,
     MatCardModule,
-    MatIconModule,
-    MatInputModule,
-    MatFormFieldModule
+    MatIconModule
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css'
 })
 export class DashboardComponent implements OnInit {
   employeeId: string | null = null;
-  loginForm!: FormGroup;
   recordsList: CableTermination[] = [];
   isLoading = false;
   totalRecords = 0;
 
   constructor(
-    private fb: FormBuilder,
+    private router: Router,
     private storageService: StorageService,
     private apiService: ApiService,
     private cdr: ChangeDetectorRef
-  ) {
-    this.initLoginForm();
-  }
+  ) {}
 
   ngOnInit(): void {
     this.checkLogin();
-  }
-
-  initLoginForm(): void {
-    this.loginForm = this.fb.group({
-      userId: ['', [Validators.required, Validators.pattern(/^\d{6,7}$/)]]
-    });
   }
 
   checkLogin(): void {
     this.employeeId = this.storageService.getEmployeeId();
     if (this.employeeId) {
       this.loadRecords();
+    } else {
+      // Just in case guard fails or gets bypassed
+      this.router.navigate(['/login']);
     }
-  }
-
-  onLoginSubmit(): void {
-    if (this.loginForm.invalid) return;
-    const id = this.loginForm.value.userId;
-    this.storageService.setEmployeeId(id);
-    this.employeeId = id;
-    this.cdr.detectChanges();
-    this.loadRecords();
   }
 
   loadRecords(): void {
@@ -92,7 +71,7 @@ export class DashboardComponent implements OnInit {
     this.employeeId = null;
     this.recordsList = [];
     this.totalRecords = 0;
-    this.loginForm.reset();
+    this.router.navigate(['/login']);
     this.cdr.detectChanges();
   }
 }

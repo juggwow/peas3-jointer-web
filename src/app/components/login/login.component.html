@@ -1,0 +1,124 @@
+<div class="login-container animate-fade-in">
+  <!-- 1. Login Screen (if not registering) -->
+  <div *ngIf="!isRegistering" class="login-wrapper">
+    <mat-card class="login-card pea-card">
+      <mat-card-header>
+        <div class="pea-logo-circle large">
+          <span class="material-icons logo-icon">electric_bolt</span>
+        </div>
+        <div class="login-header-text">
+          <mat-card-title class="login-title">กรุณากรอกรหัสพนักงาน</mat-card-title>
+          <mat-card-subtitle class="login-subtitle">ระบบบันทึกข้อมูลการติดตั้ง Termination
+            สายเคเบิลใต้ดิน</mat-card-subtitle>
+        </div>
+      </mat-card-header>
+      <mat-card-content>
+        <form [formGroup]="loginForm" (ngSubmit)="onLoginSubmit()" class="login-form">
+          <mat-form-field appearance="outline">
+            <mat-label>รหัสพนักงาน (6-7 หลัก)</mat-label>
+            <input matInput formControlName="userId" placeholder="ตัวอย่าง: 1023456" maxlength="7" autocomplete="off">
+            <mat-icon matSuffix class="main-purple">badge</mat-icon>
+            <mat-error *ngIf="loginForm.get('userId')?.hasError('required')">
+              กรุณากรอกรหัสพนักงาน
+            </mat-error>
+            <mat-error *ngIf="loginForm.get('userId')?.hasError('pattern')">
+              รหัสพนักงานต้องเป็นตัวเลข 6-7 หลักเท่านั้น
+            </mat-error>
+          </mat-form-field>
+          <button mat-raised-button color="primary" type="submit" [disabled]="loginForm.invalid || isLoading"
+            class="login-btn">
+            <mat-icon [class.spin-icon]="isLoading">sync</mat-icon>
+            เข้าสู่ระบบ
+          </button>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- 2. Registration Screen (if user is registering) -->
+  <div *ngIf="isRegistering" class="login-wrapper">
+    <mat-card class="register-card pea-card">
+      <mat-card-header>
+        <div class="pea-logo-circle large">
+          <span class="material-icons logo-icon">person_add</span>
+        </div>
+        <div class="login-header-text">
+          <mat-card-title class="login-title">ลงทะเบียนพนักงานใหม่</mat-card-title>
+          <mat-card-subtitle class="login-subtitle">ไม่พบข้อมูลพนักงานนี้ในระบบ
+            กรุณากรอกประวัติเพื่อเริ่มต้นใช้งาน</mat-card-subtitle>
+        </div>
+      </mat-card-header>
+      <mat-card-content>
+        <form [formGroup]="registerForm" (ngSubmit)="onRegisterSubmit()" class="login-form">
+          <!-- ID Field (Disabled) -->
+          <mat-form-field appearance="outline">
+            <mat-label>รหัสพนักงาน</mat-label>
+            <input matInput formControlName="id" readonly>
+            <mat-icon matSuffix class="main-purple">badge</mat-icon>
+          </mat-form-field>
+
+          <!-- First Name -->
+          <mat-form-field appearance="outline">
+            <mat-label>ชื่อจริง</mat-label>
+            <input matInput formControlName="firstName" placeholder="ระบุชื่อจริง" autocomplete="off">
+            <mat-icon matSuffix class="main-purple">person</mat-icon>
+            <mat-error *ngIf="registerForm.get('firstName')?.hasError('required')">
+              กรุณากรอกชื่อจริง
+            </mat-error>
+          </mat-form-field>
+
+          <!-- Last Name -->
+          <mat-form-field appearance="outline">
+            <mat-label>นามสกุล</mat-label>
+            <input matInput formControlName="lastName" placeholder="ระบุนามสกุล" autocomplete="off">
+            <mat-icon matSuffix class="main-purple">person_outline</mat-icon>
+            <mat-error *ngIf="registerForm.get('lastName')?.hasError('required')">
+              กรุณากรอกนามสกุล
+            </mat-error>
+          </mat-form-field>
+
+          <!-- Position -->
+          <mat-form-field appearance="outline">
+            <mat-label>ตำแหน่ง</mat-label>
+            <input matInput formControlName="position" placeholder="เช่น พชง.5, วศก.4" autocomplete="off">
+            <mat-icon matSuffix class="main-purple">work</mat-icon>
+          </mat-form-field>
+
+          <!-- Department -->
+          <mat-form-field appearance="outline">
+            <mat-label>สังกัด</mat-label>
+            <input matInput formControlName="department" placeholder="เช่น ผบส.กบษ.(ต3), ผปร.กฟส.ควนขนุน"
+              autocomplete="off">
+            <mat-icon matSuffix class="main-purple">business</mat-icon>
+          </mat-form-field>
+
+          <!-- Region Group -->
+          <mat-form-field appearance="outline">
+            <mat-label>รหัสการไฟฟ้า</mat-label>
+            <input matInput formControlName="regionGroup" placeholder="ตัวอย่าง: L07101" maxlength="6"
+              autocomplete="off">
+            <mat-icon matSuffix class="main-purple">electric_bolt</mat-icon>
+            <mat-error *ngIf="registerForm.get('regionGroup')?.hasError('required')">
+              กรุณากรอกรหัสการไฟฟ้า
+            </mat-error>
+            <mat-error *ngIf="registerForm.get('regionGroup')?.hasError('pattern')">
+              รหัสการไฟฟ้าต้องขึ้นต้นด้วย A-L และตามด้วยตัวเลข 5 หลักเท่านั้น
+            </mat-error>
+          </mat-form-field>
+
+          <div class="register-actions">
+            <button mat-raised-button color="primary" type="submit" [disabled]="registerForm.invalid || isLoading"
+              class="register-submit-btn">
+              <mat-icon [class.spin-icon]="isLoading">sync</mat-icon>
+              บันทึกข้อมูลและเข้าใช้งาน
+            </button>
+            <button mat-button type="button" (click)="cancelRegister()" [disabled]="isLoading"
+              class="register-cancel-btn">
+              ยกเลิก
+            </button>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

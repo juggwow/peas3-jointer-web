@@ -1,5 +1,5 @@
 <div class="detail-container animate-fade-in">
-  
+
   <!-- Loading State -->
   <div *ngIf="loading" class="loading-wrapper">
     <mat-spinner color="primary" diameter="50"></mat-spinner>
@@ -18,14 +18,14 @@
 
   <!-- Main Detail View -->
   <div *ngIf="record && !loading" class="detail-content">
-    
+
     <!-- Header Controls -->
     <div class="header-controls">
       <button mat-button routerLink="/">
         <mat-icon>arrow_back</mat-icon>
         กลับหน้าหลัก
       </button>
-      
+
       <div class="header-badges">
         <span class="badge" [ngClass]="getPhaseClass(record.phase)">
           Phase {{ record.phase }}
@@ -38,37 +38,37 @@
 
     <!-- Details Grid -->
     <div class="detail-grid">
-      
+
       <!-- Text Details Card -->
       <mat-card class="pea-card info-card">
         <mat-card-header>
           <div class="form-title">
             <mat-icon>info</mat-icon>
-            ข้อมูลสายเคเบิลใต้ดิน (Angular 22)
+            ข้อมูลสายเคเบิลใต้ดิน
           </div>
         </mat-card-header>
         <mat-card-content>
           <table class="info-table">
             <tr>
-              <th>รหัสวงจร (Circuit):</th>
+              <th>วงจร/บริเวณ/สถานที่:</th>
               <td><strong>{{ record.circuitName }}</strong></td>
             </tr>
             <tr>
-              <th>รหัสพนักงานผู้ติดตั้ง:</th>
+              <th>ผู้ติดตั้ง:</th>
               <td>{{ record.userId }}</td>
             </tr>
             <tr>
-              <th>ประเภทวัสดุ (Type):</th>
+              <th>ประเภท Termination:</th>
               <td>{{ record.terminationType }}</td>
             </tr>
             <tr>
               <th>วันที่ติดตั้ง:</th>
               <td>{{ record.installationDate | date:'dd MMMM yyyy' }}</td>
             </tr>
-            <tr>
+            <!-- <tr>
               <th>วันเวลาที่บันทึกระบบ:</th>
               <td>{{ record.createdAt | date:'dd/MM/yyyy HH:mm:ss' }} น.</td>
-            </tr>
+            </tr> -->
             <tr>
               <th>ละติจูด (Latitude):</th>
               <td>{{ record.latitude }}</td>
@@ -103,9 +103,10 @@
           <mat-icon>collections</mat-icon>
           รูปภาพการทำงาน ({{ record.images?.length || 0 }} ภาพ)
         </div>
-        
+
         <div class="gallery-actions">
-          <input type="file" #addFileInput id="add-file-uploader" (change)="uploadMoreImages($event)" accept="image/*" multiple class="hidden-input">
+          <input type="file" #addFileInput id="add-file-uploader" (change)="uploadMoreImages($event)" accept="image/*"
+            multiple class="hidden-input">
           <label for="add-file-uploader" class="add-photos-btn" [ngClass]="{'disabled': uploadingImages}">
             <mat-icon>{{ uploadingImages ? 'sync' : 'add_a_photo' }}</mat-icon>
             <span>{{ uploadingImages ? 'กำลังอัปโหลด...' : 'เพิ่มรูปภาพ' }}</span>
@@ -126,7 +127,8 @@
             </div>
             <div class="img-footer">
               <span class="upload-date">{{ img.uploadedAt | date:'dd/MM/yy HH:mm' }} น.</span>
-              <button mat-icon-button color="warn" class="delete-img-btn" (click)="deleteImage(img)" title="ลบภาพนี้" [disabled]="deletingId === img.id">
+              <button mat-icon-button color="warn" class="delete-img-btn" (click)="deleteImage(img)" title="ลบภาพนี้"
+                [disabled]="deletingId === img.id">
                 <mat-icon *ngIf="deletingId !== img.id">delete_forever</mat-icon>
                 <mat-spinner *ngIf="deletingId === img.id" diameter="18" color="warn"></mat-spinner>
               </button>

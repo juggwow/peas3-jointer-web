@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 export interface HistoryItem {
   id: string;
@@ -15,12 +16,11 @@ export class StorageService {
   private imageKeysKey = 'pea_jointer_image_keys';
   private employeeIdKey = 'pea_jointer_employee_id';
 
+  private employeeId$ = new BehaviorSubject<string | null>(this.getEmployeeIdFromLocalStorage());
+
   constructor() {}
 
-  /**
-   * Get employee ID from local storage
-   */
-  getEmployeeId(): string | null {
+  private getEmployeeIdFromLocalStorage(): string | null {
     try {
       return localStorage.getItem(this.employeeIdKey);
     } catch (e) {
@@ -30,11 +30,26 @@ export class StorageService {
   }
 
   /**
+   * Get employee ID from local storage
+   */
+  getEmployeeId(): string | null {
+    return this.employeeId$.value;
+  }
+
+  /**
+   * Get employee ID observable
+   */
+  getEmployeeIdObservable(): Observable<string | null> {
+    return this.employeeId$.asObservable();
+  }
+
+  /**
    * Save employee ID to local storage
    */
   setEmployeeId(id: string): void {
     try {
       localStorage.setItem(this.employeeIdKey, id);
+      this.employeeId$.next(id);
     } catch (e) {
       console.error('Failed to save employee ID to localStorage', e);
     }
@@ -46,6 +61,7 @@ export class StorageService {
   clearEmployeeId(): void {
     try {
       localStorage.removeItem(this.employeeIdKey);
+      this.employeeId$.next(null);
     } catch (e) {
       console.error('Failed to remove employee ID from localStorage', e);
     }

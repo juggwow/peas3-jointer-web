@@ -116,3 +116,113 @@
     margin: 0 !important;
   }
 }
+
+/* User Profile Dropdown Styles */
+.nav-profile-btn {
+  display: flex !important;
+  align-items: center;
+  gap: 4px;
+  border-radius: 20px !important;
+  padding: 0 12px !important;
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  color: white !important;
+  height: 38px !important;
+  transition: background-color 0.2s ease;
+}
+
+.nav-profile-btn:hover {
+  background-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+.nav-profile-id {
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.arrow-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  margin-left: 2px;
+}
+
+.pea-user-menu {
+  border-radius: 12px !important;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1) !important;
+  margin-top: 8px;
+  min-width: 200px !important;
+  overflow: hidden !important;
+  border: 1px solid rgba(126, 41, 130, 0.15);
+}
+
+.menu-user-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  background-color: var(--primary-light);
+}
+
+.menu-user-icon {
+  font-size: 36px;
+  width: 36px;
+  height: 36px;
+  color: var(--primary-color);
+}
+
+.menu-user-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.menu-user-label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.menu-user-id {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--primary-color);
+}
+
+.pea-menu-item {
+  height: 44px !important;
+  font-size: 0.9rem !important;
+  font-family: var(--font-family) !important;
+}
+
+.menu-item-icon {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+  margin-right: 8px !important;
+}
+
+.purple-icon {
+  color: var(--primary-color);
+}
+
+.warn-icon {
+  color: var(--error-color);
+}
+
+.text-warn {
+  color: var(--error-color) !important;
+}
+
+@media (max-width: 600px) {
+  .nav-profile-id, .arrow-icon {
+    display: none !important;
+  }
+  .nav-profile-btn {
+    min-width: 44px !important;
+    padding: 0 !important;
+    border-radius: 50% !important;
+    width: 44px !important;
+    height: 44px !important;
+    justify-content: center;
+  }
+}

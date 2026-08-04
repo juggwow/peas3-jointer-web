@@ -7,34 +7,19 @@
       </div>
       <div class="title-text">
         <h2>รายการติดตั้ง Cable Terminations ทั้งหมด</h2>
-        <p>ตารางข้อมูลบันทึกความแม่นยำพิกัดและการติดตั้งสายเคเบิลใต้ดิน</p>
       </div>
     </div>
-    <button mat-raised-button color="accent" routerLink="/record/new" class="add-btn">
-      <mat-icon>add_circle</mat-icon>
-      บันทึกข้อมูลใหม่
-    </button>
   </div>
 
   <!-- Filter Section -->
   <div class="filter-card pea-card">
     <mat-form-field appearance="outline" class="search-field">
       <mat-label>ค้นหาวงจร, ประเภทอุปกรณ์ หรือรหัสผู้บันทึก</mat-label>
-      <input 
-        matInput 
-        [(ngModel)]="searchQuery" 
-        (ngModelChange)="onSearchChange($event)" 
-        placeholder="พิมพ์คำค้นหา เช่น วงจร, Link, รหัสพนักงาน..."
-      />
+      <input matInput [(ngModel)]="searchQuery" (ngModelChange)="onSearchChange($event)"
+        placeholder="พิมพ์คำค้นหา เช่น วงจร, Link, รหัสพนักงาน..." />
       <mat-icon matSuffix class="search-suffix-icon">search</mat-icon>
-      <button 
-        *ngIf="searchQuery" 
-        matSuffix 
-        mat-icon-button 
-        aria-label="ล้างคำค้นหา" 
-        (click)="clearSearch(); $event.stopPropagation()"
-        class="clear-search-btn"
-      >
+      <button *ngIf="searchQuery" matSuffix mat-icon-button aria-label="ล้างคำค้นหา"
+        (click)="clearSearch(); $event.stopPropagation()" class="clear-search-btn">
         <mat-icon>close</mat-icon>
       </button>
     </mat-form-field>
@@ -50,7 +35,7 @@
 
     <div class="table-responsive" [class.content-loading]="isLoading">
       <table mat-table [dataSource]="dataSource" class="records-table">
-        
+
         <!-- Index Column -->
         <ng-container matColumnDef="index">
           <th mat-header-cell *matHeaderCellDef class="col-index"> ลำดับ </th>
@@ -60,16 +45,12 @@
         </ng-container>
 
         <!-- Thumbnail Column -->
-        <ng-container matColumnDef="thumbnail">
+        <!-- <ng-container matColumnDef="thumbnail">
           <th mat-header-cell *matHeaderCellDef class="col-thumb"> รูปภาพ </th>
           <td mat-cell *matCellDef="let element" class="col-thumb">
             <div class="thumbnail-wrapper">
-              <img 
-                *ngIf="element.images && element.images.length > 0" 
-                [src]="element.images[0].imageUrl" 
-                alt="Termination" 
-                class="table-thumb"
-              />
+              <img *ngIf="element.images && element.images.length > 0" [src]="element.images[0].imageUrl"
+                alt="Termination" class="table-thumb" />
               <div *ngIf="!element.images || element.images.length === 0" class="no-thumb-wrapper">
                 <mat-icon class="no-thumb-icon">photo</mat-icon>
               </div>
@@ -78,12 +59,12 @@
               </span>
             </div>
           </td>
-        </ng-container>
+        </ng-container> -->
 
         <!-- Circuit Name Column -->
         <ng-container matColumnDef="circuitName">
           <th mat-header-cell *matHeaderCellDef> ชื่อวงจร </th>
-          <td mat-cell *matCellDef="let element" class="circuit-name-cell"> 
+          <td mat-cell *matCellDef="let element" class="circuit-name-cell">
             <strong>{{ element.circuitName }}</strong>
           </td>
         </ng-container>
@@ -107,7 +88,8 @@
         <!-- Termination Type Column -->
         <ng-container matColumnDef="terminationType">
           <th mat-header-cell *matHeaderCellDef class="col-termination"> ประเภทอุปกรณ์ </th>
-          <td mat-cell *matCellDef="let element" class="text-secondary col-termination"> {{ element.terminationType }} </td>
+          <td mat-cell *matCellDef="let element" class="text-secondary col-termination"> {{ element.terminationType }}
+          </td>
         </ng-container>
 
         <!-- Installation Date Column -->
@@ -148,15 +130,8 @@
     </div>
 
     <!-- Paginator -->
-    <mat-paginator 
-      [length]="totalCount"
-      [pageSize]="limit"
-      [pageSizeOptions]="[5, 10, 20, 50]"
-      [pageIndex]="page - 1"
-      (page)="onPageChange($event)"
-      aria-label="เลือกหน้า"
-      class="records-paginator"
-    >
+    <mat-paginator [length]="totalCount" [pageSize]="limit" [pageSizeOptions]="[5, 10, 20, 50]" [pageIndex]="page - 1"
+      (page)="onPageChange($event)" aria-label="เลือกหน้า" class="records-paginator">
     </mat-paginator>
   </div>
 </div>

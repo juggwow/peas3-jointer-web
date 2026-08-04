@@ -25,6 +25,15 @@ export interface CableTermination {
   images?: TerminationImage[];
 }
 
+export interface User {
+  id: string;
+  firstName: string;
+  lastName: string;
+  position?: string;
+  department?: string;
+  regionGroup: string;
+}
+
 export interface PaginatedResponse<T> {
   data: T[];
   totalCount: number;
@@ -83,5 +92,25 @@ export class ApiService {
 
   getImageUrl(imageId: string): string {
     return `${this.baseUrl}/images/${imageId}`;
+  }
+
+  getUser(id: string): Observable<User> {
+    return this.http.get<User>(`${this.baseUrl}/users/${id}`);
+  }
+
+  createUser(user: User): Observable<{ message: string; data: User }> {
+    return this.http.post<{ message: string; data: User }>(`${this.baseUrl}/users`, user);
+  }
+
+  updateUser(id: string, user: Partial<User>): Observable<{ message: string; data: User }> {
+    return this.http.put<{ message: string; data: User }>(`${this.baseUrl}/users/${id}`, user);
+  }
+
+  getUsers(page: number, limit: number, search?: string): Observable<PaginatedResponse<User>> {
+    let url = `${this.baseUrl}/users?page=${page}&limit=${limit}`;
+    if (search) {
+      url += `&search=${encodeURIComponent(search)}`;
+    }
+    return this.http.get<PaginatedResponse<User>>(url);
   }
 }

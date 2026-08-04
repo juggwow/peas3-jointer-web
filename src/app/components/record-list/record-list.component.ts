@@ -38,7 +38,6 @@ export class RecordListComponent implements OnInit, OnDestroy {
   dataSource: CableTermination[] = [];
   displayedColumns: string[] = [
     'index',
-    'thumbnail',
     'circuitName',
     'phase',
     'operationType',
@@ -59,7 +58,7 @@ export class RecordListComponent implements OnInit, OnDestroy {
   private searchSubject = new BehaviorSubject<string>('');
   private stateSubscription?: Subscription;
 
-  constructor(private apiService: ApiService, private cdr: ChangeDetectorRef) {}
+  constructor(private apiService: ApiService, private cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {
     this.stateSubscription = combineLatest([
