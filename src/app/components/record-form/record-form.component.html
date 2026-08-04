@@ -63,10 +63,10 @@
           </div>
 
           <mat-form-field appearance="outline">
-            <mat-label>ชื่อวงจร (Circuit Name)</mat-label>
+            <mat-label>วงจร/บริเวณ/สถานที่</mat-label>
             <input matInput formControlName="circuitName" placeholder="ตัวอย่าง: F12-03 Main Feeder">
             <mat-error *ngIf="recordForm.get('circuitName')?.hasError('required')">
-              กรุณากรอกชื่อวงจร
+              กรุณากรอกชื่อวงจร หรือ บริเวณ หรือ สถานที่
             </mat-error>
           </mat-form-field>
         </div>

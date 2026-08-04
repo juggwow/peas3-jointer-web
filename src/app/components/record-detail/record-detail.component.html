@@ -26,7 +26,8 @@
           <mat-icon>arrow_back</mat-icon>
           กลับหน้าหลัก
         </button>
-        <button mat-raised-button color="primary" *ngIf="isCreator && !isEditing" (click)="toggleEditMode()" class="edit-toggle-btn">
+        <button mat-raised-button color="primary" *ngIf="isCreator && !isEditing" (click)="toggleEditMode()"
+          class="edit-toggle-btn">
           <mat-icon>edit</mat-icon>
           แก้ไขข้อมูล
         </button>
@@ -66,12 +67,13 @@
             <tr>
               <th>ผู้ติดตั้ง:</th>
               <td>
-                <span *ngIf="record.userFirstName">{{ record.userFirstName }} {{ record.userLastName }} (รหัส: {{ record.userId }})</span>
+                <span *ngIf="record.userFirstName">{{ record.userFirstName }} {{ record.userLastName }} (รหัส: {{
+                  record.userId }})</span>
                 <span *ngIf="!record.userFirstName">{{ record.userId }}</span>
               </td>
             </tr>
             <tr>
-              <th>กฟฟ. (พื้นที่ติดตั้ง):</th>
+              <th>กฟฟ. ที่สนับสนุนพนักงาน:</th>
               <td>{{ record.peaName || record.regionGroup || '-' }}</td>
             </tr>
             <tr>
@@ -120,11 +122,13 @@
                   <mat-option value="Other">อื่นๆ (ระบุเอง)</mat-option>
                 </mat-select>
               </mat-form-field>
-              
-              <mat-form-field appearance="outline" *ngIf="editForm.get('operationType')?.value === 'Other'" class="w-100 animate-fade-in">
+
+              <mat-form-field appearance="outline" *ngIf="editForm.get('operationType')?.value === 'Other'"
+                class="w-100 animate-fade-in">
                 <mat-label>ระบุประเภทการติดตั้งอื่น ๆ</mat-label>
                 <input matInput formControlName="operationTypeCustom" placeholder="ระบุประเภทการติดตั้ง">
-                <mat-error *ngIf="editForm.get('operationTypeCustom')?.hasError('required')">กรุณาระบุประเภทการติดตั้ง</mat-error>
+                <mat-error
+                  *ngIf="editForm.get('operationTypeCustom')?.hasError('required')">กรุณาระบุประเภทการติดตั้ง</mat-error>
               </mat-form-field>
             </div>
 
@@ -142,10 +146,12 @@
                 </mat-select>
               </mat-form-field>
 
-              <mat-form-field appearance="outline" *ngIf="editForm.get('terminationType')?.value === 'Other'" class="w-100 animate-fade-in">
+              <mat-form-field appearance="outline" *ngIf="editForm.get('terminationType')?.value === 'Other'"
+                class="w-100 animate-fade-in">
                 <mat-label>ระบุประเภทวัสดุอื่น ๆ</mat-label>
                 <input matInput formControlName="terminationTypeCustom" placeholder="ระบุประเภทวัสดุ">
-                <mat-error *ngIf="editForm.get('terminationTypeCustom')?.hasError('required')">กรุณาระบุประเภทวัสดุ</mat-error>
+                <mat-error
+                  *ngIf="editForm.get('terminationTypeCustom')?.hasError('required')">กรุณาระบุประเภทวัสดุ</mat-error>
               </mat-form-field>
             </div>
 
@@ -155,7 +161,8 @@
                 <input matInput [matDatepicker]="editPicker" formControlName="installationDate">
                 <mat-datepicker-toggle matIconSuffix [for]="editPicker"></mat-datepicker-toggle>
                 <mat-datepicker #editPicker></mat-datepicker>
-                <mat-error *ngIf="editForm.get('installationDate')?.hasError('required')">กรุณาเลือกวันที่ติดตั้ง</mat-error>
+                <mat-error
+                  *ngIf="editForm.get('installationDate')?.hasError('required')">กรุณาเลือกวันที่ติดตั้ง</mat-error>
               </mat-form-field>
             </div>
 
@@ -171,15 +178,17 @@
                 <mat-error *ngIf="editForm.get('longitude')?.hasError('required')">กรุณากรอกลองจิจูด</mat-error>
               </mat-form-field>
             </div>
-            
-            <p class="edit-map-tip"><mat-icon>info</mat-icon> คุณสามารถลากหมุดบนแผนที่หรือคลิกพื้นที่บนแผนที่เพื่อเปลี่ยนพิกัดละติจูด/ลองจิจูดได้</p>
+
+            <p class="edit-map-tip"><mat-icon>info</mat-icon>
+              คุณสามารถลากหมุดบนแผนที่หรือคลิกพื้นที่บนแผนที่เพื่อเปลี่ยนพิกัดละติจูด/ลองจิจูดได้</p>
 
             <div class="edit-actions-row">
               <button mat-button type="button" (click)="toggleEditMode()" [disabled]="updating">
                 ยกเลิก
               </button>
               <button mat-raised-button color="accent" type="submit" [disabled]="editForm.invalid || updating">
-                <mat-spinner diameter="18" *ngIf="updating" style="margin-right: 8px; display: inline-block;"></mat-spinner>
+                <mat-spinner diameter="18" *ngIf="updating"
+                  style="margin-right: 8px; display: inline-block;"></mat-spinner>
                 บันทึกการแก้ไข
               </button>
             </div>
