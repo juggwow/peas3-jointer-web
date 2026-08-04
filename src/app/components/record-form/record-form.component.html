@@ -152,12 +152,12 @@
         <div class="section-divider">ภาพถ่ายการติดตั้ง Termination</div>
 
         <div class="upload-area">
-          <input type="file" #fileInput id="file-uploader" (change)="onFileSelected($event)" accept="image/*" multiple
+          <input type="file" #fileInput id="file-uploader" (change)="onFileSelected($event)" accept=".jpg,.jpeg,.png,.heic,.heif,image/jpeg,image/png,image/heic,image/heif" multiple
             class="hidden-input">
           <label for="file-uploader" class="upload-box-label">
             <mat-icon class="upload-icon">add_a_photo</mat-icon>
             <span>กดที่นี่เพื่อเพิ่มรูปภาพ หรือถ่ายภาพจากกล้องมือถือ</span>
-            <span class="upload-subtext">จำกัดขนาดไฟล์ไม่เกิน 5MB ต่อภาพ</span>
+            <span class="upload-subtext">รองรับไฟล์ JPEG, PNG และ HEIC (จำกัดไม่เกิน 20MB ต่อภาพ)</span>
           </label>
         </div>
 

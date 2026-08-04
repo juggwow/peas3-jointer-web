@@ -15,6 +15,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 import { ApiService, CableTermination, TerminationImage } from '../../services/api.service';
 import { StorageService } from '../../services/storage.service';
+import { resizeImage, isSupportedImageType } from '../../utils/image-utils';
 
 import * as L from 'leaflet';
 
@@ -211,8 +212,14 @@ export class RecordDetailComponent implements OnInit, OnDestroy, AfterViewInit {
     const fileList: File[] = [];
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
-      if (file.size > 5 * 1024 * 1024) {
-        this.snackBar.open(`ภาพ ${file.name} เกินขนาด 5MB!`, 'ตกลง', { duration: 4000 });
+
+      if (!isSupportedImageType(file)) {
+        this.snackBar.open(`ไฟล์ ${file.name} ไม่รองรับ! อนุญาตเฉพาะ JPEG, PNG และ HEIC`, 'ตกลง', { duration: 5000 });
+        continue;
+      }
+
+      if (file.size > 20 * 1024 * 1024) {
+        this.snackBar.open(`ภาพ ${file.name} เกินขนาด 20MB!`, 'ตกลง', { duration: 4000 });
         continue;
       }
       fileList.push(file);
@@ -221,28 +228,55 @@ export class RecordDetailComponent implements OnInit, OnDestroy, AfterViewInit {
     if (fileList.length === 0) return;
 
     this.uploadingImages = true;
-    this.snackBar.open(`กำลังอัปโหลดรูปภาพใหม่ ${fileList.length} ภาพ...`, 'ปิด', { duration: 2000 });
+    this.snackBar.open('กำลังปรับขนาดและบีบอัดรูปภาพ...', 'ปิด', { duration: 2000 });
 
-    this.apiService.uploadImages(this.recordId, fileList).subscribe({
-      next: (uploadRes) => {
-        // Store image key mappings in localStorage!
-        if (uploadRes.data && Array.isArray(uploadRes.data)) {
-          uploadRes.data.forEach(img => {
-            if (img.id && img.imageKey) {
-              this.storageService.saveImageKey(img.id, img.imageKey);
-            }
-          });
+    const resizePromises = fileList.map(file => resizeImage(file));
+    Promise.all(resizePromises).then(resizedFiles => {
+      this.snackBar.open(`กำลังอัปโหลดรูปภาพใหม่ ${resizedFiles.length} ภาพ...`, 'ปิด', { duration: 2000 });
+
+      this.apiService.uploadImages(this.recordId, resizedFiles).subscribe({
+        next: (uploadRes) => {
+          // Store image key mappings in localStorage!
+          if (uploadRes.data && Array.isArray(uploadRes.data)) {
+            uploadRes.data.forEach(img => {
+              if (img.id && img.imageKey) {
+                this.storageService.saveImageKey(img.id, img.imageKey);
+              }
+            });
+          }
+
+          this.snackBar.open('อัปโหลดรูปภาพเพิ่มเติมเรียบร้อยแล้ว', 'ตกลง', { duration: 3000 });
+          this.uploadingImages = false;
+          this.fetchDetails();
+        },
+        error: (err) => {
+          console.error('Upload more images failed', err);
+          this.snackBar.open('ไม่สามารถอัปโหลดรูปภาพเพิ่มเติมได้', 'ตกลง', { duration: 4000 });
+          this.uploadingImages = false;
         }
-
-        this.snackBar.open('อัปโหลดรูปภาพเพิ่มเติมเรียบร้อยแล้ว', 'ตกลง', { duration: 3000 });
-        this.uploadingImages = false;
-        this.fetchDetails();
-      },
-      error: (err) => {
-        console.error('Upload more images failed', err);
-        this.snackBar.open('ไม่สามารถอัปโหลดรูปภาพเพิ่มเติมได้', 'ตกลง', { duration: 4000 });
-        this.uploadingImages = false;
-      }
+      });
+    }).catch(err => {
+      console.error('Resizing failed, uploading original files', err);
+      // Fallback to original files
+      this.apiService.uploadImages(this.recordId, fileList).subscribe({
+        next: (uploadRes) => {
+          if (uploadRes.data && Array.isArray(uploadRes.data)) {
+            uploadRes.data.forEach(img => {
+              if (img.id && img.imageKey) {
+                this.storageService.saveImageKey(img.id, img.imageKey);
+              }
+            });
+          }
+          this.snackBar.open('อัปโหลดรูปภาพเพิ่มเติมเรียบร้อยแล้ว', 'ตกลง', { duration: 3000 });
+          this.uploadingImages = false;
+          this.fetchDetails();
+        },
+        error: (uploadErr) => {
+          console.error('Fallback upload more images failed', uploadErr);
+          this.snackBar.open('ไม่สามารถอัปโหลดรูปภาพเพิ่มเติมได้', 'ตกลง', { duration: 4000 });
+          this.uploadingImages = false;
+        }
+      });
     });
 
     event.target.value = '';

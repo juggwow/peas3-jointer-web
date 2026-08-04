@@ -236,7 +236,7 @@
         </div>
 
         <div class="gallery-actions" *ngIf="isCreator">
-          <input type="file" #addFileInput id="add-file-uploader" (change)="uploadMoreImages($event)" accept="image/*"
+          <input type="file" #addFileInput id="add-file-uploader" (change)="uploadMoreImages($event)" accept=".jpg,.jpeg,.png,.heic,.heif,image/jpeg,image/png,image/heic,image/heif"
             multiple class="hidden-input">
           <label for="add-file-uploader" class="add-photos-btn" [ngClass]="{'disabled': uploadingImages}">
             <mat-icon>{{ uploadingImages ? 'sync' : 'add_a_photo' }}</mat-icon>

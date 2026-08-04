@@ -16,6 +16,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ApiService } from '../../services/api.service';
 import { GeolocationService } from '../../services/geolocation.service';
 import { StorageService } from '../../services/storage.service';
+import { resizeImage, isSupportedImageType } from '../../utils/image-utils';
 
 import * as L from 'leaflet';
 
@@ -202,23 +203,46 @@ export class RecordFormComponent implements OnInit, OnDestroy, AfterViewInit {
 
   onFileSelected(event: any): void {
     const files: FileList = event.target.files;
-    if (!files) return;
+    if (!files || files.length === 0) return;
+
+    this.snackBar.open('กำลังประมวลผลและบีบอัดรูปภาพ...', 'ปิด', { duration: 2000 });
 
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
-      if (file.size > 5 * 1024 * 1024) {
-        this.snackBar.open(`ไฟล์ ${file.name} เกินขนาด 5MB!`, 'ตกลง', { duration: 4000 });
+
+      if (!isSupportedImageType(file)) {
+        this.snackBar.open(`ไฟล์ ${file.name} ไม่รองรับ! อนุญาตเฉพาะ JPEG, PNG และ HEIC`, 'ตกลง', { duration: 5000 });
         continue;
       }
 
-      const reader = new FileReader();
-      reader.onload = (e: any) => {
-        this.imageQueue.push({
-          file,
-          previewUrl: e.target.result
-        });
-      };
-      reader.readAsDataURL(file);
+      if (file.size > 20 * 1024 * 1024) {
+        this.snackBar.open(`ไฟล์ ${file.name} เกินขนาด 20MB!`, 'ตกลง', { duration: 4000 });
+        continue;
+      }
+
+      resizeImage(file).then(resizedFile => {
+        const reader = new FileReader();
+        reader.onload = (e: any) => {
+          this.imageQueue.push({
+            file: resizedFile,
+            previewUrl: e.target.result
+          });
+          this.cdr.detectChanges();
+        };
+        reader.readAsDataURL(resizedFile);
+      }).catch(err => {
+        console.error('Failed to process image:', err);
+        // Fallback to original
+        const reader = new FileReader();
+        reader.onload = (e: any) => {
+          this.imageQueue.push({
+            file,
+            previewUrl: e.target.result
+          });
+          this.cdr.detectChanges();
+        };
+        reader.readAsDataURL(file);
+      });
     }
 
     event.target.value = '';
@@ -272,12 +296,12 @@ export class RecordFormComponent implements OnInit, OnDestroy, AfterViewInit {
 
         // Upload images if any
         if (this.imageQueue.length > 0) {
-          this.uploadProgress = 40;
+          this.uploadProgress = 50;
           this.statusText = `กำลังอัปโหลดรูปภาพ (${this.imageQueue.length} ภาพ)...`;
           this.cdr.detectChanges();
-          
+
           const files = this.imageQueue.map(img => img.file);
-          
+
           this.apiService.uploadImages(createdId, files).subscribe({
             next: (uploadRes) => {
               // Store image key mappings in localStorage!
