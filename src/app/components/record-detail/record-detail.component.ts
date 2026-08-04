@@ -282,6 +282,8 @@ export class RecordDetailComponent implements OnInit, OnDestroy, AfterViewInit {
       const termCustomVal = isCustomTerm ? this.record.terminationType : '';
 
       this.editForm = this.fb.group({
+        userId: [{ value: this.record.userId, disabled: true }],
+        regionGroupDisplay: [{ value: this.record.peaName || this.record.regionGroup || '-', disabled: true }],
         circuitName: [this.record.circuitName, Validators.required],
         phase: [this.record.phase, Validators.required],
         operationType: [opVal, Validators.required],

@@ -97,6 +97,22 @@
           <form [formGroup]="editForm" (ngSubmit)="onSubmitUpdate()" *ngIf="isEditing" class="edit-mode-form">
             <div class="edit-form-field">
               <mat-form-field appearance="outline" class="w-100">
+                <mat-label>รหัสพนักงาน (ผู้ติดตั้ง)</mat-label>
+                <input matInput formControlName="userId">
+                <mat-icon matSuffix>badge</mat-icon>
+              </mat-form-field>
+            </div>
+
+            <div class="edit-form-field">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>กฟฟ. ที่สนับสนุนพนักงาน</mat-label>
+                <input matInput formControlName="regionGroupDisplay">
+                <mat-icon matSuffix>business</mat-icon>
+              </mat-form-field>
+            </div>
+
+            <div class="edit-form-field">
+              <mat-form-field appearance="outline" class="w-100">
                 <mat-label>วงจร/บริเวณ/สถานที่</mat-label>
                 <input matInput formControlName="circuitName" placeholder="เช่น F12-03 Main Feeder">
                 <mat-error *ngIf="editForm.get('circuitName')?.hasError('required')">กรุณากรอกชื่อวงจร</mat-error>
