@@ -13,6 +13,8 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
+import { Subscription } from 'rxjs';
+
 import { ApiService } from '../../services/api.service';
 import { GeolocationService } from '../../services/geolocation.service';
 import { StorageService } from '../../services/storage.service';
@@ -69,6 +71,7 @@ export class RecordFormComponent implements OnInit, OnDestroy, AfterViewInit {
   submitting = false;
   uploadProgress = 0;
   statusText = '';
+  private formSubscription?: Subscription;
 
   constructor(
     private fb: FormBuilder,
@@ -89,6 +92,26 @@ export class RecordFormComponent implements OnInit, OnDestroy, AfterViewInit {
       this.router.navigate(['/']);
       return;
     }
+
+    // Subscribe to form value changes to save draft
+    this.formSubscription = this.recordForm.valueChanges.subscribe(value => {
+      if (!this.submitting) {
+        this.storageService.saveFormDraft(value);
+      }
+    });
+
+    // Check for existing draft and offer to restore
+    const draft = this.storageService.getFormDraft();
+    if (draft) {
+      setTimeout(() => {
+        const snackBarRef = this.snackBar.open('พบข้อมูลแบบร่างที่คุณกรอกไว้ก่อนหน้านี้', 'กู้คืนข้อมูล', {
+          duration: 10000
+        });
+        snackBarRef.onAction().subscribe(() => {
+          this.restoreDraft(draft);
+        });
+      }, 500);
+    }
   }
 
   ngAfterViewInit(): void {
@@ -99,6 +122,40 @@ export class RecordFormComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.map) {
       this.map.remove();
     }
+    if (this.formSubscription) {
+      this.formSubscription.unsubscribe();
+    }
+  }
+
+  restoreDraft(draft: any): void {
+    if (!draft) return;
+
+    let parsedDate = new Date();
+    if (draft.installationDate) {
+      parsedDate = new Date(draft.installationDate);
+    }
+
+    this.recordForm.patchValue({
+      installationDate: parsedDate,
+      operationType: draft.operationType,
+      operationTypeCustom: draft.operationTypeCustom,
+      circuitName: draft.circuitName,
+      phase: draft.phase,
+      terminationType: draft.terminationType,
+      terminationTypeCustom: draft.terminationTypeCustom,
+      latitude: draft.latitude,
+      longitude: draft.longitude
+    });
+
+    if (draft.operationType) {
+      this.onOperationTypeChange(draft.operationType);
+    }
+    if (draft.terminationType) {
+      this.onTerminationTypeChange(draft.terminationType);
+    }
+
+    this.onCoordsChange();
+    this.snackBar.open('กู้คืนข้อมูลแบบร่างเรียบร้อยแล้ว', 'ตกลง', { duration: 3000 });
   }
 
   initForm(): void {
@@ -290,6 +347,9 @@ export class RecordFormComponent implements OnInit, OnDestroy, AfterViewInit {
           this.handleError('เซิร์ฟเวอร์ไม่ได้ส่ง ID ประจำรายการกลับมา');
           return;
         }
+
+        // Clear draft since it is successfully submitted
+        this.storageService.clearFormDraft();
 
         // Save to local history
         this.storageService.saveRecord(createdId, payload.circuitName, payload.phase);

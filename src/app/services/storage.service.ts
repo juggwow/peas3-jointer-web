@@ -17,6 +17,7 @@ export class StorageService {
   private imageKeysKey = 'pea_jointer_image_keys';
   private employeeIdKey = 'pea_jointer_employee_id';
   private userKey = 'pea_jointer_user';
+  private formDraftKey = 'pea_jointer_form_draft';
 
   private employeeId$ = new BehaviorSubject<string | null>(this.getEmployeeIdFromLocalStorage());
   private user$ = new BehaviorSubject<User | null>(this.getUserFromLocalStorage());
@@ -209,6 +210,41 @@ export class StorageService {
       return data ? JSON.parse(data) : {};
     } catch (e) {
       return {};
+    }
+  }
+
+  /**
+   * Save form draft to local storage
+   */
+  saveFormDraft(draft: any): void {
+    try {
+      localStorage.setItem(this.formDraftKey, JSON.stringify(draft));
+    } catch (e) {
+      console.error('Failed to save form draft to localStorage', e);
+    }
+  }
+
+  /**
+   * Get form draft from local storage
+   */
+  getFormDraft(): any | null {
+    try {
+      const data = localStorage.getItem(this.formDraftKey);
+      return data ? JSON.parse(data) : null;
+    } catch (e) {
+      console.error('Failed to read form draft from localStorage', e);
+      return null;
+    }
+  }
+
+  /**
+   * Clear form draft from local storage
+   */
+  clearFormDraft(): void {
+    try {
+      localStorage.removeItem(this.formDraftKey);
+    } catch (e) {
+      console.error('Failed to remove form draft from localStorage', e);
     }
   }
 }
