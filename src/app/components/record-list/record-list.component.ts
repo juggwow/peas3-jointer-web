@@ -39,6 +39,7 @@ export class RecordListComponent implements OnInit, OnDestroy {
   displayedColumns: string[] = [
     'index',
     'circuitName',
+    'peaName',
     'phase',
     'operationType',
     'terminationType',

@@ -28,14 +28,15 @@
         <ng-container *ngIf="employeeId">
           <button mat-button [matMenuTriggerFor]="userMenu" class="nav-profile-btn">
             <mat-icon>account_circle</mat-icon>
-            <span class="nav-profile-id">{{ employeeId }}</span>
+            <span class="nav-profile-id">{{ user?.firstName || employeeId }}</span>
             <mat-icon class="arrow-icon">arrow_drop_down</mat-icon>
           </button>
           <mat-menu #userMenu="matMenu" xPosition="before" class="pea-user-menu">
             <div class="menu-user-header">
               <mat-icon class="menu-user-icon">account_circle</mat-icon>
               <div class="menu-user-details">
-                <span class="menu-user-label">รหัสพนักงาน</span>
+                <span class="menu-user-label" *ngIf="user">{{ user.firstName }} {{ user.lastName }}</span>
+                <span class="menu-user-label" *ngIf="!user">รหัสพนักงาน</span>
                 <span class="menu-user-id">{{ employeeId }}</span>
               </div>
             </div>

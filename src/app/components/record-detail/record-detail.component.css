@@ -280,3 +280,82 @@
   color: #94A3B8;
   font-size: 0.9rem;
 }
+
+.back-edit-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.edit-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 500;
+  border-radius: 8px !important;
+}
+
+.edit-mode-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--accent-color);
+  font-weight: 600;
+}
+
+.edit-mode-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 12px;
+}
+
+.edit-form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.edit-form-field.flex-column {
+  flex-direction: column;
+}
+
+.edit-phase-group {
+  display: flex;
+  gap: 16px;
+  padding: 8px 0;
+}
+
+.w-100 {
+  width: 100%;
+}
+
+.double-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.edit-map-tip {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.edit-map-tip mat-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+}
+
+.edit-actions-row {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border-color);
+}

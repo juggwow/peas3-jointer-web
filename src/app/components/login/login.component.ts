@@ -8,8 +8,11 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { StorageService } from '../../services/storage.service';
-import { ApiService, User } from '../../services/api.service';
+import { ApiService, User, PeaOffice } from '../../services/api.service';
+import { of } from 'rxjs';
+import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-login',
@@ -23,7 +26,8 @@ import { ApiService, User } from '../../services/api.service';
     MatIconModule,
     MatInputModule,
     MatFormFieldModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    MatAutocompleteModule
   ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
@@ -34,6 +38,7 @@ export class LoginComponent implements OnInit {
   isRegistering = false;
   isLoading = false;
   returnUrl = '/';
+  filteredOffices: PeaOffice[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -70,7 +75,40 @@ export class LoginComponent implements OnInit {
       lastName: ['', Validators.required],
       position: [''],
       department: [''],
-      regionGroup: ['', [Validators.required, Validators.pattern(/^[A-La-l]\d{5}$/)]]
+      regionGroup: ['', Validators.required],
+      peaOfficeSearch: ['', Validators.required]
+    });
+
+    // Set up autocomplete
+    this.registerForm.get('peaOfficeSearch')?.valueChanges.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      switchMap(value => {
+        const searchStr = typeof value === 'string' ? value : (value?.peaName || '');
+        if (!searchStr) return of([]);
+        return this.apiService.getPeaOffices(searchStr);
+      })
+    ).subscribe(offices => {
+      this.filteredOffices = offices;
+      this.cdr.detectChanges();
+    });
+
+    // Reset regionGroup if user types manually
+    this.registerForm.get('peaOfficeSearch')?.valueChanges.subscribe(value => {
+      if (typeof value === 'string') {
+        this.registerForm.get('regionGroup')?.setValue('');
+      }
+    });
+  }
+
+  displayOfficeFn(office: PeaOffice): string {
+    return office ? `${office.peaName} (${office.regionGroup})` : '';
+  }
+
+  onOfficeSelected(event: any): void {
+    const office = event.option.value as PeaOffice;
+    this.registerForm.patchValue({
+      regionGroup: office.regionGroup
     });
   }
 
@@ -83,6 +121,7 @@ export class LoginComponent implements OnInit {
     this.apiService.getUser(id).subscribe({
       next: (user) => {
         this.isLoading = false;
+        this.storageService.setUser(user);
         this.storageService.setEmployeeId(user.id);
         this.snackBar.open('เข้าสู่ระบบสำเร็จ ยินดีต้อนรับคุณ ' + user.firstName, 'ปิด', { duration: 3000 });
         this.cdr.detectChanges();
@@ -123,6 +162,7 @@ export class LoginComponent implements OnInit {
       next: (res) => {
         this.isLoading = false;
         this.isRegistering = false;
+        this.storageService.setUser(res.data);
         this.storageService.setEmployeeId(res.data.id);
         this.snackBar.open('ลงทะเบียนและเข้าสู่ระบบสำเร็จ', 'ปิด', { duration: 3000 });
         this.cdr.detectChanges();

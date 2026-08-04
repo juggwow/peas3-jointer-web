@@ -21,12 +21,22 @@
 
     <!-- Header Controls -->
     <div class="header-controls">
-      <button mat-button routerLink="/">
-        <mat-icon>arrow_back</mat-icon>
-        กลับหน้าหลัก
-      </button>
+      <div class="back-edit-row">
+        <button mat-button routerLink="/" *ngIf="!isEditing">
+          <mat-icon>arrow_back</mat-icon>
+          กลับหน้าหลัก
+        </button>
+        <button mat-raised-button color="primary" *ngIf="isCreator && !isEditing" (click)="toggleEditMode()" class="edit-toggle-btn">
+          <mat-icon>edit</mat-icon>
+          แก้ไขข้อมูล
+        </button>
+        <span class="edit-mode-indicator" *ngIf="isEditing">
+          <mat-icon color="accent">edit</mat-icon>
+          กำลังแก้ไขข้อมูล...
+        </span>
+      </div>
 
-      <div class="header-badges">
+      <div class="header-badges" *ngIf="!isEditing">
         <span class="badge" [ngClass]="getPhaseClass(record.phase)">
           Phase {{ record.phase }}
         </span>
@@ -48,14 +58,21 @@
           </div>
         </mat-card-header>
         <mat-card-content>
-          <table class="info-table">
+          <table class="info-table" *ngIf="!isEditing">
             <tr>
               <th>วงจร/บริเวณ/สถานที่:</th>
               <td><strong>{{ record.circuitName }}</strong></td>
             </tr>
             <tr>
               <th>ผู้ติดตั้ง:</th>
-              <td>{{ record.userId }}</td>
+              <td>
+                <span *ngIf="record.userFirstName">{{ record.userFirstName }} {{ record.userLastName }} (รหัส: {{ record.userId }})</span>
+                <span *ngIf="!record.userFirstName">{{ record.userId }}</span>
+              </td>
+            </tr>
+            <tr>
+              <th>กฟฟ. (พื้นที่ติดตั้ง):</th>
+              <td>{{ record.peaName || record.regionGroup || '-' }}</td>
             </tr>
             <tr>
               <th>ประเภท Termination:</th>
@@ -65,10 +82,6 @@
               <th>วันที่ติดตั้ง:</th>
               <td>{{ record.installationDate | date:'dd MMMM yyyy' }}</td>
             </tr>
-            <!-- <tr>
-              <th>วันเวลาที่บันทึกระบบ:</th>
-              <td>{{ record.createdAt | date:'dd/MM/yyyy HH:mm:ss' }} น.</td>
-            </tr> -->
             <tr>
               <th>ละติจูด (Latitude):</th>
               <td>{{ record.latitude }}</td>
@@ -78,6 +91,99 @@
               <td>{{ record.longitude }}</td>
             </tr>
           </table>
+
+          <form [formGroup]="editForm" (ngSubmit)="onSubmitUpdate()" *ngIf="isEditing" class="edit-mode-form">
+            <div class="edit-form-field">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>วงจร/บริเวณ/สถานที่</mat-label>
+                <input matInput formControlName="circuitName" placeholder="เช่น F12-03 Main Feeder">
+                <mat-error *ngIf="editForm.get('circuitName')?.hasError('required')">กรุณากรอกชื่อวงจร</mat-error>
+              </mat-form-field>
+            </div>
+
+            <div class="edit-form-field">
+              <label class="radio-label">เฟส (Phase):</label>
+              <mat-radio-group formControlName="phase" color="primary" class="edit-phase-group">
+                <mat-radio-button value="A">Phase A</mat-radio-button>
+                <mat-radio-button value="B">Phase B</mat-radio-button>
+                <mat-radio-button value="C">Phase C</mat-radio-button>
+              </mat-radio-group>
+            </div>
+
+            <div class="edit-form-field select-with-custom-container">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>ประเภทการติดตั้ง</mat-label>
+                <mat-select formControlName="operationType" (selectionChange)="onOperationTypeChange($event.value)">
+                  <mat-option value="PEA Installation">งานของ กฟภ.</mat-option>
+                  <mat-option value="Customer Installation">งานของลูกค้า</mat-option>
+                  <mat-option value="Practice">ฝึกซ้อม</mat-option>
+                  <mat-option value="Other">อื่นๆ (ระบุเอง)</mat-option>
+                </mat-select>
+              </mat-form-field>
+              
+              <mat-form-field appearance="outline" *ngIf="editForm.get('operationType')?.value === 'Other'" class="w-100 animate-fade-in">
+                <mat-label>ระบุประเภทการติดตั้งอื่น ๆ</mat-label>
+                <input matInput formControlName="operationTypeCustom" placeholder="ระบุประเภทการติดตั้ง">
+                <mat-error *ngIf="editForm.get('operationTypeCustom')?.hasError('required')">กรุณาระบุประเภทการติดตั้ง</mat-error>
+              </mat-form-field>
+            </div>
+
+            <div class="edit-form-field select-with-custom-container">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>ประเภทวัสดุ Termination</mat-label>
+                <mat-select formControlName="terminationType" (selectionChange)="onTerminationTypeChange($event.value)">
+                  <mat-option value="Cold Shrink 3M (Indoor)">Cold Shrink 3M (Indoor)</mat-option>
+                  <mat-option value="Cold Shrink 3M (Outdoor)">Cold Shrink 3M (Outdoor)</mat-option>
+                  <mat-option value="Heat Shrink Raychem (Indoor)">Heat Shrink Raychem (Indoor)</mat-option>
+                  <mat-option value="Heat Shrink Raychem (Outdoor)">Heat Shrink Raychem (Outdoor)</mat-option>
+                  <mat-option value="Elbow Connector">Elbow Connector (15kV / 22kV)</mat-option>
+                  <mat-option value="Straight Joint">Straight Joint</mat-option>
+                  <mat-option value="Other">อื่นๆ (ระบุเอง)</mat-option>
+                </mat-select>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" *ngIf="editForm.get('terminationType')?.value === 'Other'" class="w-100 animate-fade-in">
+                <mat-label>ระบุประเภทวัสดุอื่น ๆ</mat-label>
+                <input matInput formControlName="terminationTypeCustom" placeholder="ระบุประเภทวัสดุ">
+                <mat-error *ngIf="editForm.get('terminationTypeCustom')?.hasError('required')">กรุณาระบุประเภทวัสดุ</mat-error>
+              </mat-form-field>
+            </div>
+
+            <div class="edit-form-field">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>วันที่ติดตั้ง</mat-label>
+                <input matInput [matDatepicker]="editPicker" formControlName="installationDate">
+                <mat-datepicker-toggle matIconSuffix [for]="editPicker"></mat-datepicker-toggle>
+                <mat-datepicker #editPicker></mat-datepicker>
+                <mat-error *ngIf="editForm.get('installationDate')?.hasError('required')">กรุณาเลือกวันที่ติดตั้ง</mat-error>
+              </mat-form-field>
+            </div>
+
+            <div class="edit-form-field double-fields">
+              <mat-form-field appearance="outline">
+                <mat-label>ละติจูด (Latitude)</mat-label>
+                <input matInput type="number" step="any" formControlName="latitude" (change)="onCoordsChange()">
+                <mat-error *ngIf="editForm.get('latitude')?.hasError('required')">กรุณากรอกละติจูด</mat-error>
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>ลองจิจูด (Longitude)</mat-label>
+                <input matInput type="number" step="any" formControlName="longitude" (change)="onCoordsChange()">
+                <mat-error *ngIf="editForm.get('longitude')?.hasError('required')">กรุณากรอกลองจิจูด</mat-error>
+              </mat-form-field>
+            </div>
+            
+            <p class="edit-map-tip"><mat-icon>info</mat-icon> คุณสามารถลากหมุดบนแผนที่หรือคลิกพื้นที่บนแผนที่เพื่อเปลี่ยนพิกัดละติจูด/ลองจิจูดได้</p>
+
+            <div class="edit-actions-row">
+              <button mat-button type="button" (click)="toggleEditMode()" [disabled]="updating">
+                ยกเลิก
+              </button>
+              <button mat-raised-button color="accent" type="submit" [disabled]="editForm.invalid || updating">
+                <mat-spinner diameter="18" *ngIf="updating" style="margin-right: 8px; display: inline-block;"></mat-spinner>
+                บันทึกการแก้ไข
+              </button>
+            </div>
+          </form>
         </mat-card-content>
       </mat-card>
 
@@ -104,7 +210,7 @@
           รูปภาพการทำงาน ({{ record.images?.length || 0 }} ภาพ)
         </div>
 
-        <div class="gallery-actions">
+        <div class="gallery-actions" *ngIf="isCreator">
           <input type="file" #addFileInput id="add-file-uploader" (change)="uploadMoreImages($event)" accept="image/*"
             multiple class="hidden-input">
           <label for="add-file-uploader" class="add-photos-btn" [ngClass]="{'disabled': uploadingImages}">
@@ -128,7 +234,7 @@
             <div class="img-footer">
               <span class="upload-date">{{ img.uploadedAt | date:'dd/MM/yy HH:mm' }} น.</span>
               <button mat-icon-button color="warn" class="delete-img-btn" (click)="deleteImage(img)" title="ลบภาพนี้"
-                [disabled]="deletingId === img.id">
+                [disabled]="deletingId === img.id" *ngIf="isCreator">
                 <mat-icon *ngIf="deletingId !== img.id">delete_forever</mat-icon>
                 <mat-spinner *ngIf="deletingId === img.id" diameter="18" color="warn"></mat-spinner>
               </button>

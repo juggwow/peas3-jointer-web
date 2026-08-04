@@ -267,7 +267,19 @@
 }
 
 .col-user {
-  width: 100px;
+  width: 150px;
+  max-width: 180px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.col-pea {
+  width: 150px;
+  max-width: 180px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .col-termination {

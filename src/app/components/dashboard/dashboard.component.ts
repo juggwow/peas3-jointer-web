@@ -5,7 +5,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { StorageService } from '../../services/storage.service';
-import { ApiService, CableTermination } from '../../services/api.service';
+import { ApiService, CableTermination, User } from '../../services/api.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -22,6 +22,8 @@ import { ApiService, CableTermination } from '../../services/api.service';
 })
 export class DashboardComponent implements OnInit {
   employeeId: string | null = null;
+  user: User | null = null;
+  userPeaName = '';
   recordsList: CableTermination[] = [];
   isLoading = false;
   totalRecords = 0;
@@ -38,13 +40,49 @@ export class DashboardComponent implements OnInit {
   }
 
   checkLogin(): void {
-    this.employeeId = this.storageService.getEmployeeId();
-    if (this.employeeId) {
+    this.user = this.storageService.getUser();
+    if (this.user) {
+      this.employeeId = this.user.id;
       this.loadRecords();
+      this.loadUserPeaName();
     } else {
-      // Just in case guard fails or gets bypassed
-      this.router.navigate(['/login']);
+      this.employeeId = this.storageService.getEmployeeId();
+      if (this.employeeId) {
+        // Fallback: fetch user from API
+        this.apiService.getUser(this.employeeId).subscribe({
+          next: (user) => {
+            this.user = user;
+            this.storageService.setUser(user);
+            this.loadRecords();
+            this.loadUserPeaName();
+          },
+          error: () => {
+            this.router.navigate(['/login']);
+          }
+        });
+      } else {
+        this.router.navigate(['/login']);
+      }
     }
+  }
+
+  loadUserPeaName(): void {
+    if (!this.user || !this.user.regionGroup) return;
+    this.apiService.getPeaOffices(this.user.regionGroup).subscribe({
+      next: (offices) => {
+        const matchingOffice = offices.find(o => o.regionGroup === this.user?.regionGroup);
+        if (matchingOffice) {
+          this.userPeaName = matchingOffice.peaName;
+        } else {
+          this.userPeaName = this.user?.regionGroup || '';
+        }
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.userPeaName = this.user?.regionGroup || '';
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   loadRecords(): void {
@@ -69,6 +107,8 @@ export class DashboardComponent implements OnInit {
   logout(): void {
     this.storageService.clearEmployeeId();
     this.employeeId = null;
+    this.user = null;
+    this.userPeaName = '';
     this.recordsList = [];
     this.totalRecords = 0;
     this.router.navigate(['/login']);

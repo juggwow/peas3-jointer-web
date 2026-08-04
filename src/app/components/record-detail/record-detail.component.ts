@@ -1,9 +1,15 @@
 import { Component, OnInit, OnDestroy, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatRadioModule } from '@angular/material/radio';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
@@ -18,9 +24,15 @@ import * as L from 'leaflet';
   imports: [
     CommonModule,
     RouterModule,
+    ReactiveFormsModule,
     MatCardModule,
     MatButtonModule,
     MatIconModule,
+    MatInputModule,
+    MatSelectModule,
+    MatRadioModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
     MatProgressSpinnerModule,
     MatSnackBarModule
   ],
@@ -38,12 +50,18 @@ export class RecordDetailComponent implements OnInit, OnDestroy, AfterViewInit {
   uploadingImages = false;
   activeFullImg: TerminationImage | null = null;
 
+  isCreator = false;
+  isEditing = false;
+  updating = false;
+  editForm!: FormGroup;
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private apiService: ApiService,
     private snackBar: MatSnackBar,
     private storageService: StorageService,
+    private fb: FormBuilder,
     private cdr: ChangeDetectorRef
   ) {}
 
@@ -74,6 +92,7 @@ export class RecordDetailComponent implements OnInit, OnDestroy, AfterViewInit {
       next: (res) => {
         this.record = res;
         this.loading = false;
+        this.isCreator = this.storageService.getEmployeeId() === res.userId;
         this.cdr.detectChanges();
         
         if (res.id && res.circuitName && res.phase) {
@@ -133,6 +152,10 @@ export class RecordDetailComponent implements OnInit, OnDestroy, AfterViewInit {
 
   destroyMap(): void {
     if (this.map) {
+      if (this.marker) {
+        this.marker.off('dragend', this.onMarkerDragEnd);
+      }
+      this.map.off('click', this.onMapClick);
       this.map.remove();
       this.map = null;
       this.marker = null;
@@ -231,5 +254,171 @@ export class RecordDetailComponent implements OnInit, OnDestroy, AfterViewInit {
 
   closeFullScreen(): void {
     this.activeFullImg = null;
+  }
+
+  toggleEditMode(): void {
+    if (!this.record) return;
+
+    this.isEditing = !this.isEditing;
+
+    if (this.isEditing) {
+      // Determine if original operationType is custom
+      const standardOpTypes = ['PEA Installation', 'Customer Installation', 'Practice'];
+      const isCustomOp = !standardOpTypes.includes(this.record.operationType);
+      const opVal = isCustomOp ? 'Other' : this.record.operationType;
+      const opCustomVal = isCustomOp ? this.record.operationType : '';
+
+      // Determine if original terminationType is custom
+      const standardTermTypes = [
+        'Cold Shrink 3M (Indoor)',
+        'Cold Shrink 3M (Outdoor)',
+        'Heat Shrink Raychem (Indoor)',
+        'Heat Shrink Raychem (Outdoor)',
+        'Elbow Connector',
+        'Straight Joint'
+      ];
+      const isCustomTerm = !standardTermTypes.includes(this.record.terminationType);
+      const termVal = isCustomTerm ? 'Other' : this.record.terminationType;
+      const termCustomVal = isCustomTerm ? this.record.terminationType : '';
+
+      this.editForm = this.fb.group({
+        circuitName: [this.record.circuitName, Validators.required],
+        phase: [this.record.phase, Validators.required],
+        operationType: [opVal, Validators.required],
+        operationTypeCustom: [opCustomVal],
+        terminationType: [termVal, Validators.required],
+        terminationTypeCustom: [termCustomVal],
+        installationDate: [new Date(this.record.installationDate), Validators.required],
+        latitude: [this.record.latitude, [Validators.required, Validators.min(-90), Validators.max(90)]],
+        longitude: [this.record.longitude, [Validators.required, Validators.min(-180), Validators.max(180)]]
+      });
+
+      // Handle custom validations initially
+      this.onOperationTypeChange(opVal);
+      this.onTerminationTypeChange(termVal);
+
+      // Make marker draggable and listen to map clicks
+      if (this.marker) {
+        this.marker.dragging?.enable();
+        this.marker.on('dragend', this.onMarkerDragEnd);
+      }
+      if (this.map) {
+        this.map.on('click', this.onMapClick);
+      }
+    } else {
+      // Turn off: restore map state and marker options
+      if (this.marker) {
+        this.marker.dragging?.disable();
+        this.marker.off('dragend', this.onMarkerDragEnd);
+      }
+      if (this.map) {
+        this.map.off('click', this.onMapClick);
+      }
+      this.fetchDetails(); // Reload original record details
+    }
+    this.cdr.detectChanges();
+  }
+
+  onMarkerDragEnd = () => {
+    if (!this.marker || !this.editForm) return;
+    const position = this.marker.getLatLng();
+    this.editForm.patchValue({
+      latitude: parseFloat(position.lat.toFixed(6)),
+      longitude: parseFloat(position.lng.toFixed(6))
+    });
+    this.cdr.detectChanges();
+  }
+
+  onMapClick = (e: L.LeafletMouseEvent) => {
+    if (!this.marker || !this.editForm || !this.isEditing) return;
+    const coords = e.latlng;
+    this.marker.setLatLng(coords);
+    this.editForm.patchValue({
+      latitude: parseFloat(coords.lat.toFixed(6)),
+      longitude: parseFloat(coords.lng.toFixed(6))
+    });
+    this.cdr.detectChanges();
+  }
+
+  onCoordsChange(): void {
+    const lat = this.editForm.get('latitude')?.value;
+    const lng = this.editForm.get('longitude')?.value;
+    if (lat && lng && this.marker && this.map) {
+      const newLatLng = new L.LatLng(lat, lng);
+      this.marker.setLatLng(newLatLng);
+      this.map.setView(newLatLng, this.map.getZoom());
+    }
+  }
+
+  onOperationTypeChange(value: string): void {
+    const customControl = this.editForm.get('operationTypeCustom');
+    if (value === 'Other') {
+      customControl?.setValidators([Validators.required]);
+    } else {
+      customControl?.clearValidators();
+      customControl?.setValue('');
+    }
+    customControl?.updateValueAndValidity();
+  }
+
+  onTerminationTypeChange(value: string): void {
+    const customControl = this.editForm.get('terminationTypeCustom');
+    if (value === 'Other') {
+      customControl?.setValidators([Validators.required]);
+    } else {
+      customControl?.clearValidators();
+      customControl?.setValue('');
+    }
+    customControl?.updateValueAndValidity();
+  }
+
+  onSubmitUpdate(): void {
+    if (this.editForm.invalid || this.updating || !this.record) return;
+
+    this.updating = true;
+    this.cdr.detectChanges();
+
+    const formVal = this.editForm.getRawValue();
+    const dateObj: Date = formVal.installationDate;
+
+    const opType = formVal.operationType === 'Other' ? formVal.operationTypeCustom : formVal.operationType;
+    const termType = formVal.terminationType === 'Other' ? formVal.terminationTypeCustom : formVal.terminationType;
+
+    const payload: CableTermination = {
+      userId: this.record.userId,
+      latitude: Number(formVal.latitude),
+      longitude: Number(formVal.longitude),
+      operationType: opType,
+      circuitName: formVal.circuitName,
+      phase: formVal.phase,
+      terminationType: termType,
+      installationDate: dateObj.toISOString(),
+      regionGroup: this.record.regionGroup
+    };
+
+    this.apiService.updateTermination(this.recordId, payload).subscribe({
+      next: () => {
+        this.snackBar.open('แก้ไขข้อมูลสำเร็จเรียบร้อยแล้ว!', 'ตกลง', { duration: 3000 });
+        this.isEditing = false;
+        this.updating = false;
+        
+        // Remove drag/click listeners
+        if (this.marker) {
+          this.marker.dragging?.disable();
+          this.marker.off('dragend', this.onMarkerDragEnd);
+        }
+        if (this.map) {
+          this.map.off('click', this.onMapClick);
+        }
+
+        this.fetchDetails();
+      },
+      error: (err) => {
+        console.error('Failed to update termination', err);
+        this.snackBar.open('ไม่สามารถแก้ไขข้อมูลได้: ' + (err.error?.error || err.message), 'ตกลง', { duration: 5000 });
+        this.updating = false;
+        this.cdr.detectChanges();
+      }
+    });
   }
 }

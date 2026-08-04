@@ -23,6 +23,10 @@ export interface CableTermination {
   installationDate: string;
   createdAt?: string;
   images?: TerminationImage[];
+  regionGroup?: string;
+  peaName?: string;
+  userFirstName?: string;
+  userLastName?: string;
 }
 
 export interface User {
@@ -32,6 +36,20 @@ export interface User {
   position?: string;
   department?: string;
   regionGroup: string;
+}
+
+export interface PeaOffice {
+  id: number;
+  regionGroup: string;
+  officeBa: string;
+  peaName: string;
+  telephoneNumber: string;
+  moiCode: string;
+  office: string;
+  officeMother: string;
+  officeLevel: string;
+  peaNameFull?: string;
+  province?: string;
 }
 
 export interface PaginatedResponse<T> {
@@ -79,6 +97,13 @@ export class ApiService {
     return this.http.get<CableTermination>(`${this.baseUrl}/termination/${id}`);
   }
 
+  updateTermination(id: string, termination: CableTermination): Observable<{ message: string; data: CableTermination }> {
+    return this.http.put<{ message: string; data: CableTermination }>(
+      `${this.baseUrl}/termination/${id}`,
+      termination
+    );
+  }
+
   getTerminations(page: number, limit: number, search?: string, userId?: string): Observable<PaginatedResponse<CableTermination>> {
     let url = `${this.baseUrl}/terminations?page=${page}&limit=${limit}`;
     if (search) {
@@ -112,5 +137,13 @@ export class ApiService {
       url += `&search=${encodeURIComponent(search)}`;
     }
     return this.http.get<PaginatedResponse<User>>(url);
+  }
+
+  getPeaOffices(search?: string): Observable<PeaOffice[]> {
+    let url = `${this.baseUrl}/offices`;
+    if (search) {
+      url += `?search=${encodeURIComponent(search)}`;
+    }
+    return this.http.get<PeaOffice[]>(url);
   }
 }

@@ -254,7 +254,8 @@ export class RecordFormComponent implements OnInit, OnDestroy, AfterViewInit {
       circuitName: formVal.circuitName,
       phase: formVal.phase,
       terminationType: termType,
-      installationDate: dateObj.toISOString()
+      installationDate: dateObj.toISOString(),
+      regionGroup: this.storageService.getUser()?.regionGroup || 'L00000'
     };
 
     this.apiService.createTermination(payload).subscribe({

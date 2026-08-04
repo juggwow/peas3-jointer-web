@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { User } from './api.service';
 
 export interface HistoryItem {
   id: string;
@@ -15,8 +16,10 @@ export class StorageService {
   private historyKey = 'pea_jointer_history';
   private imageKeysKey = 'pea_jointer_image_keys';
   private employeeIdKey = 'pea_jointer_employee_id';
+  private userKey = 'pea_jointer_user';
 
   private employeeId$ = new BehaviorSubject<string | null>(this.getEmployeeIdFromLocalStorage());
+  private user$ = new BehaviorSubject<User | null>(this.getUserFromLocalStorage());
 
   constructor() {}
 
@@ -62,8 +65,57 @@ export class StorageService {
     try {
       localStorage.removeItem(this.employeeIdKey);
       this.employeeId$.next(null);
+      this.clearUser();
     } catch (e) {
       console.error('Failed to remove employee ID from localStorage', e);
+    }
+  }
+
+  private getUserFromLocalStorage(): User | null {
+    try {
+      const data = localStorage.getItem(this.userKey);
+      return data ? JSON.parse(data) : null;
+    } catch (e) {
+      console.error('Failed to read user from localStorage', e);
+      return null;
+    }
+  }
+
+  /**
+   * Get full user object from local storage
+   */
+  getUser(): User | null {
+    return this.user$.value;
+  }
+
+  /**
+   * Get user observable
+   */
+  getUserObservable(): Observable<User | null> {
+    return this.user$.asObservable();
+  }
+
+  /**
+   * Save full user object to local storage
+   */
+  setUser(user: User): void {
+    try {
+      localStorage.setItem(this.userKey, JSON.stringify(user));
+      this.user$.next(user);
+    } catch (e) {
+      console.error('Failed to save user to localStorage', e);
+    }
+  }
+
+  /**
+   * Clear user object from local storage
+   */
+  clearUser(): void {
+    try {
+      localStorage.removeItem(this.userKey);
+      this.user$.next(null);
+    } catch (e) {
+      console.error('Failed to remove user from localStorage', e);
     }
   }
 

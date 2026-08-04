@@ -92,17 +92,18 @@
             <mat-icon matSuffix class="main-purple">business</mat-icon>
           </mat-form-field>
 
-          <!-- Region Group -->
+          <!-- Region Group (PEA Office Autocomplete) -->
           <mat-form-field appearance="outline">
-            <mat-label>รหัสการไฟฟ้า</mat-label>
-            <input matInput formControlName="regionGroup" placeholder="ตัวอย่าง: L07101" maxlength="6"
-              autocomplete="off">
-            <mat-icon matSuffix class="main-purple">electric_bolt</mat-icon>
-            <mat-error *ngIf="registerForm.get('regionGroup')?.hasError('required')">
-              กรุณากรอกรหัสการไฟฟ้า
-            </mat-error>
-            <mat-error *ngIf="registerForm.get('regionGroup')?.hasError('pattern')">
-              รหัสการไฟฟ้าต้องขึ้นต้นด้วย A-L และตามด้วยตัวเลข 5 หลักเท่านั้น
+            <mat-label>ค้นหาและเลือกการไฟฟ้า (ชื่อ หรือ รหัส)</mat-label>
+            <input matInput formControlName="peaOfficeSearch" [matAutocomplete]="auto" placeholder="ระบุชื่อการไฟฟ้า เช่น ควนขนุน หรือรหัส L07" autocomplete="off">
+            <mat-icon matSuffix class="main-purple">search</mat-icon>
+            <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayOfficeFn" (optionSelected)="onOfficeSelected($event)">
+              <mat-option *ngFor="let office of filteredOffices" [value]="office">
+                {{ office.peaName }} ({{ office.regionGroup }})
+              </mat-option>
+            </mat-autocomplete>
+            <mat-error *ngIf="registerForm.get('peaOfficeSearch')?.hasError('required')">
+              กรุณาเลือกการไฟฟ้าที่สังกัด
             </mat-error>
           </mat-form-field>
 

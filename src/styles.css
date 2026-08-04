@@ -169,7 +169,9 @@ body {
 }
 
 /* Angular Material Select Panel & Dropdown styling (solid background) */
-.mat-mdc-select-panel {
+.mat-mdc-select-panel,
+.mat-mdc-autocomplete-panel,
+.mat-autocomplete-panel {
   background-color: var(--card-bg) !important;
   box-shadow: var(--shadow-lg) !important;
   border-radius: 8px !important;
