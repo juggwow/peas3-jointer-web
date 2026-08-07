@@ -41,7 +41,7 @@ export function resizeImage(file: File, maxSizeBytes: number = 1024 * 1024): Pro
         toType: 'image/jpeg',
         quality: 0.8
       })
-      .then((convertedBlob: any) => {
+      .then((convertedBlob: Blob | Blob[]) => {
         const blob = Array.isArray(convertedBlob) ? convertedBlob[0] : convertedBlob;
         
         let newFileName = file.name;
@@ -76,7 +76,7 @@ export function resizeImage(file: File, maxSizeBytes: number = 1024 * 1024): Pro
 function resizeAndCompressImage(file: File, maxSizeBytes: number): Promise<File> {
   return new Promise((resolve) => {
     const reader = new FileReader();
-    reader.onload = (event: any) => {
+    reader.onload = (event: ProgressEvent<FileReader>) => {
       const img = new Image();
       img.onload = () => {
         const canvas = document.createElement('canvas');
@@ -138,7 +138,7 @@ function resizeAndCompressImage(file: File, maxSizeBytes: number): Promise<File>
         compress(quality);
       };
       img.onerror = () => resolve(file);
-      img.src = event.target.result;
+      img.src = event.target?.result as string;
     };
     reader.onerror = () => resolve(file);
     reader.readAsDataURL(file);

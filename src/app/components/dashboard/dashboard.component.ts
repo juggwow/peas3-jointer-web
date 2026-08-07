@@ -6,6 +6,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { StorageService } from '../../services/storage.service';
 import { ApiService, CableTermination, User } from '../../services/api.service';
+import { ThaiDatePipe } from '../../pipes/thai-date.pipe';
 
 @Component({
   selector: 'app-dashboard',
@@ -15,7 +16,8 @@ import { ApiService, CableTermination, User } from '../../services/api.service';
     RouterModule,
     MatButtonModule,
     MatCardModule,
-    MatIconModule
+    MatIconModule,
+    ThaiDatePipe
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css'

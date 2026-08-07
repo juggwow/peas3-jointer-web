@@ -16,6 +16,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ApiService, CableTermination, TerminationImage } from '../../services/api.service';
 import { StorageService } from '../../services/storage.service';
 import { resizeImage, isSupportedImageType } from '../../utils/image-utils';
+import { ThaiDatePipe } from '../../pipes/thai-date.pipe';
 
 import * as L from 'leaflet';
 
@@ -35,7 +36,8 @@ import * as L from 'leaflet';
     MatDatepickerModule,
     MatNativeDateModule,
     MatProgressSpinnerModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    ThaiDatePipe
   ],
   templateUrl: './record-detail.component.html',
   styleUrl: './record-detail.component.css'
@@ -205,8 +207,9 @@ export class RecordDetailComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  uploadMoreImages(event: any): void {
-    const files: FileList = event.target.files;
+  uploadMoreImages(event: Event): void {
+    const target = event.target as HTMLInputElement;
+    const files: FileList | null = target.files;
     if (!files || files.length === 0 || this.uploadingImages) return;
 
     const fileList: File[] = [];
@@ -279,7 +282,7 @@ export class RecordDetailComponent implements OnInit, OnDestroy, AfterViewInit {
       });
     });
 
-    event.target.value = '';
+    target.value = '';
   }
 
   openFullScreen(img: TerminationImage): void {

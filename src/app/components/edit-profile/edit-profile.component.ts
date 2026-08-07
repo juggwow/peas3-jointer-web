@@ -9,7 +9,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { StorageService } from '../../services/storage.service';
 import { ApiService, User, PeaOffice } from '../../services/api.service';
 import { of } from 'rxjs';
@@ -143,7 +143,7 @@ export class EditProfileComponent implements OnInit {
     return office ? `${office.peaName} (${office.regionGroup})` : '';
   }
 
-  onOfficeSelected(event: any): void {
+  onOfficeSelected(event: MatAutocompleteSelectedEvent): void {
     const office = event.option.value as PeaOffice;
     this.profileForm.patchValue({
       regionGroup: office.regionGroup

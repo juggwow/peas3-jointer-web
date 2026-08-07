@@ -17,7 +17,7 @@ import { Subscription } from 'rxjs';
 
 import { ApiService } from '../../services/api.service';
 import { GeolocationService } from '../../services/geolocation.service';
-import { StorageService } from '../../services/storage.service';
+import { StorageService, FormDraft } from '../../services/storage.service';
 import { resizeImage, isSupportedImageType } from '../../utils/image-utils';
 
 import * as L from 'leaflet';
@@ -127,7 +127,7 @@ export class RecordFormComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  restoreDraft(draft: any): void {
+  restoreDraft(draft: FormDraft): void {
     if (!draft) return;
 
     let parsedDate = new Date();
@@ -258,8 +258,9 @@ export class RecordFormComponent implements OnInit, OnDestroy, AfterViewInit {
     this.snackBar.open('ดึงข้อมูลพิกัด GPS เรียบร้อยแล้ว', 'ตกลง', { duration: 3000 });
   }
 
-  onFileSelected(event: any): void {
-    const files: FileList = event.target.files;
+  onFileSelected(event: Event): void {
+    const target = event.target as HTMLInputElement;
+    const files: FileList | null = target.files;
     if (!files || files.length === 0) return;
 
     this.snackBar.open('กำลังประมวลผลและบีบอัดรูปภาพ...', 'ปิด', { duration: 2000 });
@@ -279,10 +280,10 @@ export class RecordFormComponent implements OnInit, OnDestroy, AfterViewInit {
 
       resizeImage(file).then(resizedFile => {
         const reader = new FileReader();
-        reader.onload = (e: any) => {
+        reader.onload = (e: ProgressEvent<FileReader>) => {
           this.imageQueue.push({
             file: resizedFile,
-            previewUrl: e.target.result
+            previewUrl: e.target?.result as string
           });
           this.cdr.detectChanges();
         };
@@ -291,10 +292,10 @@ export class RecordFormComponent implements OnInit, OnDestroy, AfterViewInit {
         console.error('Failed to process image:', err);
         // Fallback to original
         const reader = new FileReader();
-        reader.onload = (e: any) => {
+        reader.onload = (e: ProgressEvent<FileReader>) => {
           this.imageQueue.push({
             file,
-            previewUrl: e.target.result
+            previewUrl: e.target?.result as string
           });
           this.cdr.detectChanges();
         };
@@ -302,7 +303,7 @@ export class RecordFormComponent implements OnInit, OnDestroy, AfterViewInit {
       });
     }
 
-    event.target.value = '';
+    target.value = '';
   }
 
   removeImage(index: number): void {

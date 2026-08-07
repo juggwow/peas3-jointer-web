@@ -11,6 +11,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatCardModule } from '@angular/material/card';
 import { ApiService, CableTermination } from '../../services/api.service';
+import { ThaiDatePipe } from '../../pipes/thai-date.pipe';
 import { BehaviorSubject, combineLatest, Subscription, timer, of } from 'rxjs';
 import { debounce, distinctUntilChanged, switchMap, tap, catchError } from 'rxjs/operators';
 
@@ -29,7 +30,8 @@ import { debounce, distinctUntilChanged, switchMap, tap, catchError } from 'rxjs
     MatIconModule,
     MatButtonModule,
     MatProgressSpinnerModule,
-    MatCardModule
+    MatCardModule,
+    ThaiDatePipe
   ],
   templateUrl: './record-list.component.html',
   styleUrl: './record-list.component.css'

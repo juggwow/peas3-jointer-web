@@ -22,18 +22,18 @@
     <!-- Header Controls -->
     <div class="header-controls">
       <div class="back-edit-row">
-        <button mat-button routerLink="/" *ngIf="!isEditing">
+        <button mat-button routerLink="/" *ngIf="!isEditing" class="back-btn">
           <mat-icon>arrow_back</mat-icon>
-          กลับหน้าหลัก
+          <span class="btn-text">กลับหน้าหลัก</span>
         </button>
         <button mat-raised-button color="primary" *ngIf="isCreator && !isEditing" (click)="toggleEditMode()"
           class="edit-toggle-btn">
           <mat-icon>edit</mat-icon>
-          แก้ไขข้อมูล
+          <span class="btn-text">แก้ไขข้อมูล</span>
         </button>
         <span class="edit-mode-indicator" *ngIf="isEditing">
           <mat-icon color="accent">edit</mat-icon>
-          กำลังแก้ไขข้อมูล...
+          <span class="btn-text">กำลังแก้ไขข้อมูล...</span>
         </span>
       </div>
 
@@ -82,7 +82,7 @@
             </tr>
             <tr>
               <th>วันที่ติดตั้ง:</th>
-              <td>{{ record.installationDate | date:'dd MMMM yyyy' }}</td>
+              <td>{{ record.installationDate | thaiDate:'d MMMM yyyy' }}</td>
             </tr>
             <tr>
               <th>ละติจูด (Latitude):</th>
@@ -257,7 +257,7 @@
               <img [src]="getImageUrl(img.id)" alt="Termination image">
             </div>
             <div class="img-footer">
-              <span class="upload-date">{{ img.uploadedAt | date:'dd/MM/yy HH:mm' }} น.</span>
+              <span class="upload-date">{{ img.uploadedAt | thaiDate:'d/MM/yy HH:mm' }} น.</span>
               <button mat-icon-button color="warn" class="delete-img-btn" (click)="deleteImage(img)" title="ลบภาพนี้"
                 [disabled]="deletingId === img.id" *ngIf="isCreator">
                 <mat-icon *ngIf="deletingId !== img.id">delete_forever</mat-icon>
@@ -279,6 +279,6 @@
   </button>
   <img [src]="getImageUrl(activeFullImg.id)" alt="Fullscreen termination image" (click)="$event.stopPropagation()">
   <div class="modal-info">
-    <p>บันทึกเมื่อ: {{ activeFullImg.uploadedAt | date:'dd/MM/yyyy HH:mm:ss' }} น.</p>
+    <p>บันทึกเมื่อ: {{ activeFullImg.uploadedAt | thaiDate:'d/MM/yyyy HH:mm:ss' }} น.</p>
   </div>
 </div>

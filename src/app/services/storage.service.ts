@@ -9,6 +9,18 @@ export interface HistoryItem {
   timestamp: string;
 }
 
+export interface FormDraft {
+  installationDate?: string | Date;
+  operationType?: string;
+  operationTypeCustom?: string;
+  circuitName?: string;
+  phase?: string;
+  terminationType?: string;
+  terminationTypeCustom?: string;
+  latitude?: number;
+  longitude?: number;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -216,7 +228,7 @@ export class StorageService {
   /**
    * Save form draft to local storage
    */
-  saveFormDraft(draft: any): void {
+  saveFormDraft(draft: FormDraft): void {
     try {
       localStorage.setItem(this.formDraftKey, JSON.stringify(draft));
     } catch (e) {
@@ -227,7 +239,7 @@ export class StorageService {
   /**
    * Get form draft from local storage
    */
-  getFormDraft(): any | null {
+  getFormDraft(): FormDraft | null {
     try {
       const data = localStorage.getItem(this.formDraftKey);
       return data ? JSON.parse(data) : null;

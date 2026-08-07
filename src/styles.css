@@ -135,6 +135,10 @@ body {
   gap: 10px;
 }
 
+.form-title mat-icon {
+  flex-shrink: 0;
+}
+
 /* Leaflet Map overrides and styling */
 .map-container {
   height: 380px;
@@ -203,3 +207,9 @@ body {
   border: 1px solid var(--border-color) !important;
 }
 
+/* Mobile Typography Adjustments */
+@media (max-width: 600px) {
+  html {
+    font-size: 14px;
+  }
+}

@@ -55,6 +55,7 @@
   font-size: 0.85rem;
   font-weight: 500;
   color: white;
+  white-space: nowrap;
 }
 
 .badge-phase-a { background-color: #E2B93B; color: #1E293B; }
@@ -138,6 +139,16 @@
   font-size: 0.9rem;
   cursor: pointer;
   transition: var(--transition-smooth);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+@media (max-width: 600px) {
+  .gallery-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
 }
 
 .add-photos-btn:hover {
@@ -293,6 +304,30 @@
   gap: 6px;
   font-weight: 500;
   border-radius: 8px !important;
+  min-width: unset !important;
+}
+
+.back-btn {
+  min-width: unset !important;
+}
+
+@media (max-width: 600px) {
+  .btn-text {
+    display: none;
+  }
+  
+  .back-btn, .edit-toggle-btn {
+    padding: 0 8px !important;
+  }
+  
+  .edit-toggle-btn mat-icon, .back-btn mat-icon {
+    margin: 0 !important;
+  }
+  
+  .header-badges {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
 }
 
 .edit-mode-indicator {

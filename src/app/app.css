@@ -2,6 +2,7 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  overflow-x: hidden;
 }
 
 .main-navbar {
@@ -99,21 +100,32 @@
 }
 
 @media (max-width: 600px) {
+  .brand-title {
+    font-size: 1rem;
+    letter-spacing: 0;
+  }
   .brand-subtitle {
     display: none;
+  }
+  .nav-links {
+    gap: 4px;
   }
   .nav-links span {
     display: none; /* hide labels on mobile, keep icons */
   }
   .nav-new-btn {
-    min-width: 44px !important;
+    min-width: 40px !important;
     padding: 0 !important;
     border-radius: 50% !important;
-    width: 44px !important;
-    height: 44px !important;
+    width: 40px !important;
+    height: 40px !important;
   }
   .nav-new-btn mat-icon {
     margin: 0 !important;
+  }
+  .nav-links .mat-mdc-button {
+    min-width: 40px !important;
+    padding: 0 !important;
   }
 }
 
