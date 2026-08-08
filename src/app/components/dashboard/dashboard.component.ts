@@ -4,9 +4,11 @@ import { Router, RouterModule } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { StorageService } from '../../services/storage.service';
 import { ApiService, CableTermination, User } from '../../services/api.service';
 import { ThaiDatePipe } from '../../pipes/thai-date.pipe';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-dashboard',
@@ -17,6 +19,7 @@ import { ThaiDatePipe } from '../../pipes/thai-date.pipe';
     MatButtonModule,
     MatCardModule,
     MatIconModule,
+    MatSnackBarModule,
     ThaiDatePipe
   ],
   templateUrl: './dashboard.component.html',
@@ -34,7 +37,8 @@ export class DashboardComponent implements OnInit {
     private router: Router,
     private storageService: StorageService,
     private apiService: ApiService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private snackBar: MatSnackBar
   ) {}
 
   ngOnInit(): void {
@@ -115,5 +119,28 @@ export class DashboardComponent implements OnInit {
     this.totalRecords = 0;
     this.router.navigate(['/login']);
     this.cdr.detectChanges();
+  }
+
+  copyProfileLink(): void {
+    if (!this.employeeId) return;
+    
+    // Construct the backend API share URL
+    let baseUrl = environment.apiUrl;
+    if (baseUrl.startsWith('/')) {
+      // Handle relative paths (e.g. deployed with Nginx)
+      baseUrl = window.location.origin + baseUrl;
+    }
+    const shareUrl = `${baseUrl}/share/profile/${this.employeeId}`;
+
+    // Copy to clipboard
+    navigator.clipboard.writeText(shareUrl).then(() => {
+      this.snackBar.open('คัดลอกลิงก์สำเร็จ! นำไปวางใน LINE หรือ Facebook เพื่อโชว์โปรไฟล์ได้เลย', 'ปิด', {
+        duration: 5000,
+        panelClass: ['success-snackbar']
+      });
+    }).catch(err => {
+      console.error('Failed to copy text: ', err);
+      this.snackBar.open('ไม่สามารถคัดลอกลิงก์ได้ กรุณาลองใหม่อีกครั้ง', 'ปิด', { duration: 3000 });
+    });
   }
 }

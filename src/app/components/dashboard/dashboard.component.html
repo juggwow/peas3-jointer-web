@@ -14,21 +14,28 @@
 
   <!-- Employee Greeting Section -->
   <div class="employee-bar pea-card">
-    <div class="employee-info">
-      <mat-icon class="employee-icon main-purple">account_circle</mat-icon>
-      <div class="employee-details">
-        <span class="employee-label">ผู้เข้าใช้งานขณะนี้</span>
-        <span class="employee-val" *ngIf="user">
-          คุณ <strong>{{ user.firstName }} {{ user.lastName }}</strong> 
-          (รหัสพนักงาน: {{ employeeId }}) 
-          <span *ngIf="user.position" class="text-secondary">• {{ user.position }}</span>
-          <span *ngIf="user.department" class="text-secondary">{{ user.department ? ' (' + user.department + ')' : '' }}</span>
-          <span class="badge badge-op" style="margin-left: 8px; font-weight: 500;">
-            {{ userPeaName || user.regionGroup }}
+    <div class="employee-info-wrapper" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+      <div class="employee-info">
+        <mat-icon class="employee-icon main-purple">account_circle</mat-icon>
+        <div class="employee-details">
+          <span class="employee-label">ผู้เข้าใช้งานขณะนี้</span>
+          <span class="employee-val" *ngIf="user">
+            คุณ <strong>{{ user.firstName }} {{ user.lastName }}</strong> 
+            (รหัสพนักงาน: {{ employeeId }}) 
+            <span *ngIf="user.position" class="text-secondary">• {{ user.position }}</span>
+            <span *ngIf="user.department" class="text-secondary">{{ user.department ? ' (' + user.department + ')' : '' }}</span>
+            <span class="badge badge-op" style="margin-left: 8px; font-weight: 500;">
+              {{ userPeaName || user.regionGroup }}
+            </span>
           </span>
-        </span>
-        <span class="employee-val" *ngIf="!user">รหัสพนักงาน: <strong>{{ employeeId }}</strong></span>
+          <span class="employee-val" *ngIf="!user">รหัสพนักงาน: <strong>{{ employeeId }}</strong></span>
+        </div>
       </div>
+      
+      <button mat-stroked-button color="primary" class="share-profile-btn" (click)="copyProfileLink()" title="แชร์โปรไฟล์เพื่ออวดผลงาน">
+        <mat-icon>share</mat-icon>
+        แชร์โปรไฟล์
+      </button>
     </div>
   </div>
 
